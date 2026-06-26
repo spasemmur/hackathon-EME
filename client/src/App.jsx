@@ -1,55 +1,101 @@
 import { useState, useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
+import About from './About.jsx';
+import { registerUser, getServerMessage } from './api.js';
 import './App.css';
 
-function App() {
+function Home() {
   const [showModal, setShowModal] = useState(false);
   const [showRegister, setShowRegister] = useState(false);
   const [showLogin, setShowLogin] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
+  const [serverMessage, setServerMessage] = useState('');
+  const [error, setError] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
   
   // Состояния для форм
-  const [loginEmail, setLoginEmail] = useState('');
-  const [loginPassword, setLoginPassword] = useState('');
-  const [registerEmail, setRegisterEmail] = useState('');
+  const [loginInput, setLoginInput] = useState('');
+  const [passwordInput, setPasswordInput] = useState('');
+  const [registerLogin, setRegisterLogin] = useState('');
   const [registerPassword, setRegisterPassword] = useState('');
 
-  // Загрузка сохранённых данных при загрузке страницы
   useEffect(() => {
-    const savedEmail = localStorage.getItem('rememberedEmail');
+    // Получаем сообщение с сервера
+    getServerMessage()
+      .then(data => {
+        console.log('Данные с сервера:', data);
+        setServerMessage(data.message);
+      })
+      .catch(err => {
+        console.error('Ошибка:', err);
+        setServerMessage('Не удалось подключиться к серверу');
+      });
+
+    // Загружаем сохранённые данные
+    const savedLogin = localStorage.getItem('rememberedLogin');
     const savedPassword = localStorage.getItem('rememberedPassword');
-    if (savedEmail && savedPassword) {
-      setLoginEmail(savedEmail);
-      setLoginPassword(savedPassword);
+    if (savedLogin && savedPassword) {
+      setLoginInput(savedLogin);
+      setPasswordInput(savedPassword);
       setRememberMe(true);
     }
   }, []);
 
-  // Обработка входа
-  const handleLogin = () => {
-    if (rememberMe) {
-      localStorage.setItem('rememberedEmail', loginEmail);
-      localStorage.setItem('rememberedPassword', loginPassword);
-    } else {
-      localStorage.removeItem('rememberedEmail');
-      localStorage.removeItem('rememberedPassword');
+  const handleLogin = async () => {
+    try {
+      setError('');
+      setSuccessMessage('');
+      
+      const data = await registerUser(loginInput, passwordInput);
+      
+      if (data.success) {
+        if (rememberMe) {
+          localStorage.setItem('rememberedLogin', loginInput);
+          localStorage.setItem('rememberedPassword', passwordInput);
+        } else {
+          localStorage.removeItem('rememberedLogin');
+          localStorage.removeItem('rememberedPassword');
+        }
+        
+        setSuccessMessage(data.message);
+        setTimeout(() => {
+          setShowModal(false);
+          setShowLogin(false);
+          setSuccessMessage('');
+        }, 2000);
+      }
+    } catch (err) {
+      setError(err.message);
     }
-    
-    alert(`Вход выполнен!\nEmail: ${loginEmail}`);
-    // Здесь будет отправка данных на сервер
-    setShowModal(false);
-    setShowLogin(false);
   };
 
-  // Обработка регистрации
-  const handleRegister = () => {
-    alert(`Регистрация выполнена!\nEmail: ${registerEmail}`);
-    // Здесь будет отправка данных на сервер
-    setShowModal(false);
-    setShowRegister(false);
+  const handleRegister = async () => {
+    try {
+      setError('');
+      setSuccessMessage('');
+      
+      const data = await registerUser(registerLogin, registerPassword);
+      
+      if (data.success) {
+        setSuccessMessage(data.message);
+        setTimeout(() => {
+          setShowModal(false);
+          setShowRegister(false);
+          setSuccessMessage('');
+        }, 2000);
+      }
+    } catch (err) {
+      setError(err.message);
+    }
   };
 
   return (
     <div className="app">
+      {/* Навигация */}
+      <nav className="navbar">
+        <Link to="/about" className="nav-link">О сайте</Link>
+      </nav>
+
       {/* Иконка пользователя */}
       <div className="user-icon" onClick={() => setShowModal(true)}>
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="40" height="40" fill="white">
@@ -57,10 +103,15 @@ function App() {
         </svg>
       </div>
 
-      {/* Главный контент */}
       <div className="content">
         <h1>Трекер привычек</h1>
         <p>Клиентская часть запущена</p>
+        
+        {serverMessage && (
+          <div className="server-message">
+            <p>{serverMessage}</p>
+          </div>
+        )}
       </div>
 
       {/* Модальное окно */}
@@ -69,9 +120,13 @@ function App() {
           setShowModal(false);
           setShowRegister(false);
           setShowLogin(false);
+          setError('');
+          setSuccessMessage('');
         }}>
           <div className="modal" onClick={(e) => e.stopPropagation()}>
-            {/* Главное меню */}
+            {error && <div className="error-message">{error}</div>}
+            {successMessage && <div className="success-message">{successMessage}</div>}
+            
             {!showRegister && !showLogin ? (
               <>
                 <h2>Добро пожаловать!</h2>
@@ -88,17 +143,16 @@ function App() {
                 }}>✕</button>
               </>
             ) : showRegister ? (
-              // Форма регистрации
               <>
                 <h2>Регистрация</h2>
                 <div className="form-group">
-                  <label>Почта:</label>
+                  <label>Логин:</label>
                   <input 
-                    type="email" 
-                    placeholder="Введите email" 
+                    type="text" 
+                    placeholder="Введите логин" 
                     className="form-input"
-                    value={registerEmail}
-                    onChange={(e) => setRegisterEmail(e.target.value)}
+                    value={registerLogin}
+                    onChange={(e) => setRegisterLogin(e.target.value)}
                   />
                 </div>
                 <div className="form-group">
@@ -114,7 +168,10 @@ function App() {
                 <button className="modal-btn register-btn" onClick={handleRegister}>
                   Зарегистрироваться
                 </button>
-                <button className="modal-btn back-btn" onClick={() => setShowRegister(false)}>
+                <button className="modal-btn back-btn" onClick={() => {
+                  setShowRegister(false);
+                  setError('');
+                }}>
                   Назад
                 </button>
                 <button className="close-btn" onClick={() => {
@@ -123,17 +180,16 @@ function App() {
                 }}>✕</button>
               </>
             ) : (
-              // Форма входа
               <>
                 <h2>Вход</h2>
                 <div className="form-group">
-                  <label>Почта:</label>
+                  <label>Логин:</label>
                   <input 
-                    type="email" 
-                    placeholder="Введите email" 
+                    type="text" 
+                    placeholder="Введите логин" 
                     className="form-input"
-                    value={loginEmail}
-                    onChange={(e) => setLoginEmail(e.target.value)}
+                    value={loginInput}
+                    onChange={(e) => setLoginInput(e.target.value)}
                   />
                 </div>
                 <div className="form-group">
@@ -142,12 +198,11 @@ function App() {
                     type="password" 
                     placeholder="Введите пароль" 
                     className="form-input"
-                    value={loginPassword}
-                    onChange={(e) => setLoginPassword(e.target.value)}
+                    value={passwordInput}
+                    onChange={(e) => setPasswordInput(e.target.value)}
                   />
                 </div>
                 
-                {/* Чекбокс "Запомнить меня" */}
                 <div className="remember-me">
                   <label className="checkbox-container">
                     <input 
@@ -163,7 +218,10 @@ function App() {
                 <button className="modal-btn login-btn" onClick={handleLogin}>
                   Войти
                 </button>
-                <button className="modal-btn back-btn" onClick={() => setShowLogin(false)}>
+                <button className="modal-btn back-btn" onClick={() => {
+                  setShowLogin(false);
+                  setError('');
+                }}>
                   Назад
                 </button>
                 <button className="close-btn" onClick={() => {
@@ -176,6 +234,17 @@ function App() {
         </div>
       )}
     </div>
+  );
+}
+
+function App() {
+  return (
+    <Router>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/about" element={<About />} />
+      </Routes>
+    </Router>
   );
 }
 
