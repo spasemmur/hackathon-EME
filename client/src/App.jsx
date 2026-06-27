@@ -1,68 +1,176 @@
 import { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import About from './About.jsx';
+import Profile from './Profile.jsx';
+import Statistics from './Statistics.jsx';
 import { registerUser, getServerMessage } from './api.js';
 import './App.css';
 
+function Navigation() {
+  return (
+    <nav className="paper-nav">
+
+      <div className="nav-logo">
+        <div className="logo-tape"></div>
+        <h1>
+          Habit
+          <br />
+          Tracker
+        </h1>
+      </div>
+
+      <div className="nav-links">
+        <Link to="/" className="nav-link">Главная</Link>
+        <Link to="/about" className="nav-link">О проекте</Link>
+        <Link to="/profile" className="nav-link">Профиль</Link>
+        <Link to="/statistics" className="nav-link">Статистика</Link>
+        <Link to="/login" className="paper-btn primary-btn">Войти</Link>
+      </div>
+
+    </nav>
+  );
+}
+
 function Home() {
-  const [showModal, setShowModal] = useState(false);
-  const [showRegister, setShowRegister] = useState(false);
-  const [showLogin, setShowLogin] = useState(false);
-  const [rememberMe, setRememberMe] = useState(false);
-  const [serverMessage, setServerMessage] = useState('');
-  const [error, setError] = useState('');
-  const [successMessage, setSuccessMessage] = useState('');
-  
-  // Состояния для форм
-  const [loginInput, setLoginInput] = useState('');
-  const [passwordInput, setPasswordInput] = useState('');
-  const [registerLogin, setRegisterLogin] = useState('');
-  const [registerPassword, setRegisterPassword] = useState('');
+  const [serverMessage, setServerMessage] = useState("");
 
   useEffect(() => {
-    // Получаем сообщение с сервера
     getServerMessage()
-      .then(data => {
-        console.log('Данные с сервера:', data);
-        setServerMessage(data.message);
-      })
-      .catch(err => {
-        console.error('Ошибка:', err);
-        setServerMessage('Не удалось подключиться к серверу');
-      });
-
-    // Загружаем сохранённые данные
-    const savedLogin = localStorage.getItem('rememberedLogin');
-    const savedPassword = localStorage.getItem('rememberedPassword');
-    if (savedLogin && savedPassword) {
-      setLoginInput(savedLogin);
-      setPasswordInput(savedPassword);
-      setRememberMe(true);
-    }
+      .then((data) => setServerMessage(data.message))
+      .catch(() => setServerMessage(""));
   }, []);
+
+  return (
+    <section className="paper-page">
+
+      <div className="hero-section">
+
+        <div className="hero-left">
+
+          <div className="stamp stamp-approved">
+            ORGANIZE YOUR LIFE
+          </div>
+
+          <h1 className="paper-title hero-title">
+            Создавай
+            <br />
+            полезные
+            <br />
+            привычки
+          </h1>
+
+          <p className="paper-text hero-text">
+            Следи за ежедневными привычками,
+            анализируй прогресс и постепенно
+            достигай своих целей.
+          </p>
+
+          {serverMessage && (
+            <div className="paper-note">
+              <span className="note-icon">📌</span>
+              <span>{serverMessage}</span>
+            </div>
+          )}
+
+          <Link to="/login" className="paper-btn primary-btn glued-btn">
+            Начать →
+          </Link>
+
+        </div>
+
+        <div className="hero-right">
+
+          <div className="paper-scene">
+
+            <div className="scene-sun"></div>
+
+            <div className="scene-cloud cloud-1"></div>
+            <div className="scene-cloud cloud-2"></div>
+
+            <div className="mountain mountain-1"></div>
+            <div className="mountain mountain-2"></div>
+            <div className="mountain mountain-3"></div>
+
+            <div className="tree tree-1"></div>
+            <div className="tree tree-2"></div>
+            <div className="tree tree-3"></div>
+
+            <div className="house"></div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+      <div className="paper-features">
+
+        <div className="feature-item soft-shadow">
+          <div className="feature-icon">✅</div>
+          <h3>Привычки</h3>
+          <p className="feature-text">
+            Добавляй ежедневные привычки
+            и отмечай выполнение.
+          </p>
+        </div>
+
+        <div className="feature-item soft-shadow">
+          <div className="feature-icon">📊</div>
+          <h3>Статистика</h3>
+          <p className="feature-text">
+            Следи за сериями,
+            процентом выполнения
+            и прогрессом.
+          </p>
+        </div>
+
+        <div className="feature-item soft-shadow">
+          <div className="feature-icon">🎯</div>
+          <h3>Цели</h3>
+          <p className="feature-text">
+            Формируй новые полезные
+            привычки постепенно.
+          </p>
+        </div>
+
+      </div>
+
+    </section>
+  );
+}
+
+function Login({ onLogin }) {
+  const [showRegister, setShowRegister] = useState(false);
+  const [error, setError] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
+  const [showBanner, setShowBanner] = useState(false);
+  const [bannerMessage, setBannerMessage] = useState('');
+  
+  const [loginInput, setLoginInput] = useState('');
+  const [passwordInput, setPasswordInput] = useState('');
+  const [rememberMe, setRememberMe] = useState(false);
+  
+  const [regEmail, setRegEmail] = useState('');
+  const [regPassword, setRegPassword] = useState('');
+  const [regNickname, setRegNickname] = useState('');
+  const [regGender, setRegGender] = useState('');
+  const [regBirthDate, setRegBirthDate] = useState('');
 
   const handleLogin = async () => {
     try {
       setError('');
-      setSuccessMessage('');
-      
-      const data = await registerUser(loginInput, passwordInput);
+      const data = await registerUser({ login: loginInput, password: passwordInput });
       
       if (data.success) {
         if (rememberMe) {
           localStorage.setItem('rememberedLogin', loginInput);
           localStorage.setItem('rememberedPassword', passwordInput);
-        } else {
-          localStorage.removeItem('rememberedLogin');
-          localStorage.removeItem('rememberedPassword');
         }
-        
-        setSuccessMessage(data.message);
-        setTimeout(() => {
-          setShowModal(false);
-          setShowLogin(false);
-          setSuccessMessage('');
-        }, 2000);
+        onLogin({ login: loginInput, nickname: data.user?.nickname || loginInput });
+        setSuccessMessage('Вход выполнен успешно!');
+        setTimeout(() => setSuccessMessage(''), 3000);
+      } else {
+        setError(data.message || 'Ошибка входа');
       }
     } catch (err) {
       setError(err.message);
@@ -72,17 +180,34 @@ function Home() {
   const handleRegister = async () => {
     try {
       setError('');
-      setSuccessMessage('');
       
-      const data = await registerUser(registerLogin, registerPassword);
+      if (!regEmail || !regPassword || !regNickname || !regGender || !regBirthDate) {
+        setError('Заполните все поля');
+        return;
+      }
+      
+      const data = await registerUser({
+        login: regEmail,
+        password: regPassword,
+        nickname: regNickname,
+        gender: regGender,
+        birthDate: regBirthDate
+      });
       
       if (data.success) {
-        setSuccessMessage(data.message);
-        setTimeout(() => {
-          setShowModal(false);
-          setShowRegister(false);
-          setSuccessMessage('');
-        }, 2000);
+        setBannerMessage(`🎉 ${data.message}`);
+        setShowBanner(true);
+        
+        setRegEmail('');
+        setRegPassword('');
+        setRegNickname('');
+        setRegGender('');
+        setRegBirthDate('');
+        setShowRegister(false);
+        
+        setTimeout(() => setShowBanner(false), 5000);
+      } else {
+        setError(data.message || 'Ошибка регистрации');
       }
     } catch (err) {
       setError(err.message);
@@ -90,160 +215,186 @@ function Home() {
   };
 
   return (
-    <div className="app">
-      {/* Навигация */}
-      <nav className="navbar">
-        <Link to="/about" className="nav-link">О сайте</Link>
-      </nav>
-
-      {/* Иконка пользователя */}
-      <div className="user-icon" onClick={() => setShowModal(true)}>
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="40" height="40" fill="white">
-          <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
-        </svg>
-      </div>
-
-      <div className="content">
-        <h1>Трекер привычек</h1>
-        <p>Клиентская часть запущена</p>
-        
-        {serverMessage && (
-          <div className="server-message">
-            <p>{serverMessage}</p>
+    <div className="paper-page login-page">
+      {showBanner && (
+        <div className="success-banner">
+          <div className="banner-content">
+            <span className="banner-icon">✓</span>
+            <span className="banner-text">{bannerMessage}</span>
           </div>
-        )}
-      </div>
-
-      {/* Модальное окно */}
-      {showModal && (
-        <div className="modal-overlay" onClick={() => {
-          setShowModal(false);
-          setShowRegister(false);
-          setShowLogin(false);
-          setError('');
-          setSuccessMessage('');
-        }}>
-          <div className="modal" onClick={(e) => e.stopPropagation()}>
-            {error && <div className="error-message">{error}</div>}
-            {successMessage && <div className="success-message">{successMessage}</div>}
-            
-            {!showRegister && !showLogin ? (
-              <>
-                <h2>Добро пожаловать!</h2>
-                <button className="modal-btn register-btn" onClick={() => setShowRegister(true)}>
-                  Регистрация
-                </button>
-                <button className="modal-btn login-btn" onClick={() => setShowLogin(true)}>
-                  Вход
-                </button>
-                <button className="close-btn" onClick={() => {
-                  setShowModal(false);
-                  setShowRegister(false);
-                  setShowLogin(false);
-                }}>✕</button>
-              </>
-            ) : showRegister ? (
-              <>
-                <h2>Регистрация</h2>
-                <div className="form-group">
-                  <label>Логин:</label>
-                  <input 
-                    type="text" 
-                    placeholder="Введите логин" 
-                    className="form-input"
-                    value={registerLogin}
-                    onChange={(e) => setRegisterLogin(e.target.value)}
-                  />
-                </div>
-                <div className="form-group">
-                  <label>Пароль:</label>
-                  <input 
-                    type="password" 
-                    placeholder="Введите пароль" 
-                    className="form-input"
-                    value={registerPassword}
-                    onChange={(e) => setRegisterPassword(e.target.value)}
-                  />
-                </div>
-                <button className="modal-btn register-btn" onClick={handleRegister}>
-                  Зарегистрироваться
-                </button>
-                <button className="modal-btn back-btn" onClick={() => {
-                  setShowRegister(false);
-                  setError('');
-                }}>
-                  Назад
-                </button>
-                <button className="close-btn" onClick={() => {
-                  setShowModal(false);
-                  setShowRegister(false);
-                }}>✕</button>
-              </>
-            ) : (
-              <>
-                <h2>Вход</h2>
-                <div className="form-group">
-                  <label>Логин:</label>
-                  <input 
-                    type="text" 
-                    placeholder="Введите логин" 
-                    className="form-input"
-                    value={loginInput}
-                    onChange={(e) => setLoginInput(e.target.value)}
-                  />
-                </div>
-                <div className="form-group">
-                  <label>Пароль:</label>
-                  <input 
-                    type="password" 
-                    placeholder="Введите пароль" 
-                    className="form-input"
-                    value={passwordInput}
-                    onChange={(e) => setPasswordInput(e.target.value)}
-                  />
-                </div>
-                
-                <div className="remember-me">
-                  <label className="checkbox-container">
-                    <input 
-                      type="checkbox" 
-                      checked={rememberMe}
-                      onChange={(e) => setRememberMe(e.target.checked)}
-                    />
-                    <span className="checkmark"></span>
-                    Запомнить меня
-                  </label>
-                </div>
-
-                <button className="modal-btn login-btn" onClick={handleLogin}>
-                  Войти
-                </button>
-                <button className="modal-btn back-btn" onClick={() => {
-                  setShowLogin(false);
-                  setError('');
-                }}>
-                  Назад
-                </button>
-                <button className="close-btn" onClick={() => {
-                  setShowModal(false);
-                  setShowLogin(false);
-                }}>✕</button>
-              </>
-            )}
-          </div>
+          <button className="banner-close" onClick={() => setShowBanner(false)}>✕</button>
         </div>
       )}
+
+      <div className="paper-card auth-card torn-edge">
+        <div className="tape tape-top-center"></div>
+        <div className="paper-crease"></div>
+        
+        {!showRegister ? (
+          <>
+            <h2 className="paper-title">Вход в аккаунт</h2>
+            
+            {error && <div className="paper-error">{error}</div>}
+            {successMessage && <div className="paper-success">{successMessage}</div>}
+            
+            <div className="form-group">
+              <label className="paper-label">Логин:</label>
+              <input 
+                type="text" 
+                className="paper-input"
+                placeholder="Введите логин"
+                value={loginInput}
+                onChange={(e) => setLoginInput(e.target.value)}
+              />
+            </div>
+            
+            <div className="form-group">
+              <label className="paper-label">Пароль:</label>
+              <input 
+                type="password" 
+                className="paper-input"
+                placeholder="Введите пароль"
+                value={passwordInput}
+                onChange={(e) => setPasswordInput(e.target.value)}
+              />
+            </div>
+            
+            <div className="remember-me">
+              <label className="checkbox-container">
+                <input 
+                  type="checkbox" 
+                  checked={rememberMe}
+                  onChange={(e) => setRememberMe(e.target.checked)}
+                />
+                <span className="checkmark"></span>
+                Запомнить меня
+              </label>
+            </div>
+
+            <button className="paper-btn primary-btn glued-btn" onClick={handleLogin}>
+              Войти
+            </button>
+            
+            <button className="paper-btn secondary-btn" onClick={() => setShowRegister(true)}>
+              Создать аккаунт
+            </button>
+          </>
+        ) : (
+          <>
+            <h2 className="paper-title">Регистрация</h2>
+            
+            {error && <div className="paper-error">{error}</div>}
+            
+            <div className="form-group">
+              <label className="paper-label">Логин (Email):</label>
+              <input 
+                type="email" 
+                className="paper-input"
+                placeholder="example@mail.ru"
+                value={regEmail}
+                onChange={(e) => setRegEmail(e.target.value)}
+              />
+            </div>
+            
+            <div className="form-group">
+              <label className="paper-label">Пароль:</label>
+              <input 
+                type="password" 
+                className="paper-input"
+                placeholder="Придумайте пароль"
+                value={regPassword}
+                onChange={(e) => setRegPassword(e.target.value)}
+              />
+            </div>
+            
+            <div className="form-group">
+              <label className="paper-label">Никнейм:</label>
+              <input 
+                type="text" 
+                className="paper-input"
+                placeholder="Как вас звать?"
+                value={regNickname}
+                onChange={(e) => setRegNickname(e.target.value)}
+              />
+            </div>
+            
+            <div className="form-group">
+              <label className="paper-label">Пол:</label>
+              <select 
+                className="paper-input"
+                value={regGender}
+                onChange={(e) => setRegGender(e.target.value)}
+              >
+                <option value="">Выберите пол</option>
+                <option value="male">Мужской</option>
+                <option value="female">Женский</option>
+              </select>
+            </div>
+            
+            <div className="form-group">
+              <label className="paper-label">Дата рождения:</label>
+              <input 
+                type="date" 
+                className="paper-input"
+                value={regBirthDate}
+                onChange={(e) => setRegBirthDate(e.target.value)}
+              />
+            </div>
+            
+            <button className="paper-btn primary-btn glued-btn" onClick={handleRegister}>
+              Зарегистрироваться
+            </button>
+            
+            <button className="paper-btn secondary-btn" onClick={() => setShowRegister(false)}>
+              Назад ко входу
+            </button>
+          </>
+        )}
+      </div>
     </div>
   );
 }
 
 function App() {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [currentUser, setCurrentUser] = useState(null);
+
+  useEffect(() => {
+    const savedLogin = localStorage.getItem('rememberedLogin');
+    const savedPassword = localStorage.getItem('rememberedPassword');
+    if (savedLogin && savedPassword) {
+      setIsLoggedIn(true);
+      setCurrentUser({ login: savedLogin, nickname: savedLogin });
+    }
+  }, []);
+
+  const handleLogin = (userData) => {
+    setIsLoggedIn(true);
+    setCurrentUser(userData);
+  };
+
+  const handleLogout = () => {
+    setIsLoggedIn(false);
+    setCurrentUser(null);
+    localStorage.removeItem('rememberedLogin');
+    localStorage.removeItem('rememberedPassword');
+  };
+
   return (
     <Router>
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/about" element={<About />} />
-      </Routes>
+      <div className="app craft-paper-bg">
+        <Navigation />
+        
+        <main className="main-content">
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/login" element={<Login onLogin={handleLogin} />} />
+            <Route path="/profile" element={<Profile user={currentUser} isLoggedIn={isLoggedIn} />} />
+            <Route path="/statistics" element={<Statistics isLoggedIn={isLoggedIn} />} />
+          </Routes>
+        </main>
+      </div>
     </Router>
   );
 }

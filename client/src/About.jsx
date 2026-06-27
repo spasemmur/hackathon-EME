@@ -1,67 +1,67 @@
-import './About.css';
 import { Link } from 'react-router-dom';
 
 function About() {
   const developers = [
     {
-      name: "Егор-Сигма",
+      name: "Максим",
       role: "Backend-разработчик",
-      description: "Разработка серверной части приложения, API и работа с базой данных.",
+      description: "Разработка серверной части и API",
       icon: "⚙️",
-      color: "#4CAF50"
+      color: "#e8b86d"
     },
     {
-      name: "Максон-Клаксон",
-      role: "Frontend + Backend разработчик",
-      description: "Full-stack разработка, интеграция клиентской и серверной частей.",
+      name: "Егор",
+      role: "Full-stack разработчик",
+      description: "Интеграция фронтенда и бэкенда",
       icon: "🚀",
-      color: "#2196F3"
+      color: "#a8d5ba"
     },
     {
-      name: "Ева-Максим вернись ко мне",
+      name: "Ева",
       role: "Frontend-разработчик",
-      description: "Разработка пользовательского интерфейса и визуальное оформление.",
+      description: "Дизайн и пользовательский интерфейс",
       icon: "🎨",
-      color: "#E91E63"
+      color: "#f5c0bb"
     }
   ];
 
   return (
-    <div className="about-page">
-      <div className="about-container">
-        <Link to="/" className="back-link">← На главную</Link>
+    <div className="paper-page about-page">
+      <div className="paper-card about-card torn-edge">
+        <div className="tape tape-top-center"></div>
+        <div className="paper-crease"></div>
         
-        <h1 className="about-title">О сайте и разработчиках</h1>
+        <h2 className="paper-title">О сайте и разработчиках</h2>
         
         <div className="about-description">
           <p>
-            Проект - <strong>Трекер привычек</strong> - был разработан 
-            командой студентов в рамках прохождения <strong>летней практики</strong>.
+            Проект <strong>«Трекер привычек»</strong> разработан командой 
+            студентов в рамках <strong>летней практики 2026</strong>.
           </p>
           <p>
-            Цель проекта - создание удобного веб-приложения, помогающего пользователям 
-            отслеживать свои ежедневные привычки, формировать полезные ритуалы 
-            и следить за личным прогрессом.
+            Наша цель — помочь вам сформировать полезные привычки 
+            и отслеживать свой прогресс!
           </p>
         </div>
 
-        <h2 className="team-title">Наш класс коррекции</h2>
+        <h3 className="section-title">Наша команда</h3>
         
         <div className="developers-grid">
           {developers.map((dev, index) => (
-            <div key={index} className="developer-card" style={{ borderTopColor: dev.color }}>
-              <div className="developer-icon" style={{ backgroundColor: dev.color }}>
-                {dev.icon}
+            <div key={index} className="developer-card soft-shadow" style={{ backgroundColor: dev.color }}>
+              <div className="stamp stamp-approved" style={{ position: 'absolute', top: '10px', right: '10px', fontSize: '0.7rem' }}>
+                TEAM
               </div>
-              <h3 className="developer-name">{dev.name}</h3>
-              <p className="developer-role">{dev.role}</p>
-              <p className="developer-description">{dev.description}</p>
+              <div className="dev-icon">{dev.icon}</div>
+              <h4 className="dev-name">{dev.name}</h4>
+              <p className="dev-role">{dev.role}</p>
+              <p className="dev-desc">{dev.description}</p>
             </div>
           ))}
         </div>
 
         <div className="about-footer">
-          <p>© 2026 Hackathon EME. Все права куплены.</p>
+          <p>© 2026 Hackathon EME</p>
         </div>
       </div>
     </div>
