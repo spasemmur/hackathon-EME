@@ -7,11 +7,11 @@ const PORT = 3001;
 app.use(cors());
 app.use(express.json());
 
-app.get("/main", (req, res) => {
+app.get("/", (req, res) => {
     res.json({ message: "Сервер работает" });
 });
 
-app.post("/api/registration", (req, res) => {
+app.post("/registration", (req, res) => {
     const { login, password } = req.body;
 
     if (!login || !password) {

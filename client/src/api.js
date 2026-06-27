@@ -1,4 +1,4 @@
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+const API_URL = "http://5.42.110.101";
 
 // Регистрация/Вход (бэкенд использует один маршрут)
 export const registerUser = async (login, password) => {
@@ -10,13 +10,13 @@ export const registerUser = async (login, password) => {
       },
       body: JSON.stringify({ login, password }),
     });
-    
+
     const data = await response.json();
-    
+
     if (!response.ok) {
       throw new Error(data.message || 'Ошибка регистрации');
     }
-    
+
     return data;
   } catch (error) {
     console.error('Ошибка:', error);
@@ -27,7 +27,7 @@ export const registerUser = async (login, password) => {
 // Получение сообщения с сервера
 export const getServerMessage = async () => {
   try {
-    const response = await fetch(`${API_URL}/main`);
+    const response = await fetch(`${API_URL}/api/`);
     const data = await response.json();
     return data;
   } catch (error) {
