@@ -1,9 +1,9 @@
 const API_URL = "http://5.42.110.101";
 
-// Регистрация/Вход (бэкенд использует один маршрут)
+// Регистрация/Вход
 export const registerUser = async (login, password) => {
   try {
-    const response = await fetch(`${API_URL}/api/registration`, {
+    const response = await fetch(`${API_URL}/registration`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -24,7 +24,7 @@ export const registerUser = async (login, password) => {
   }
 };
 
-// Получение сообщения с сервера
+
 export const getServerMessage = async () => {
   try {
     const response = await fetch(`${API_URL}/api/`);
