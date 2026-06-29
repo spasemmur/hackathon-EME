@@ -13,7 +13,7 @@ app.get("/", (req, res) => {
 });
 
 // Пример использования базы в маршруте
-app.get("/api/test-db", async (req, res) => {
+app.get("/test-db", async (req, res) => {
     try {
         // Используем переменную db, которую импортировали выше
         const [rows] = await db.query("SELECT 1 + 1 AS result");
