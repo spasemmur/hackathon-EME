@@ -17,7 +17,7 @@ apiRouter.get("/", (req, res) => {
 apiRouter.get("/test-db", async (req, res) => {
     try {
         // Используем переменную db, которую импортировали выше
-        const [rows] = await db.query("SELECT 1 + 1 AS result");
+        const [rows] = await db.query("SELECT * FROM users LIMIT 100");
         res.json({ status: "Base is OK", data: rows });
     } catch (error) {
         res.status(500).json({ error: error.message });
