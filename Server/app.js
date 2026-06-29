@@ -3,17 +3,18 @@ const cors = require("cors");
 const db = require("./database-connection")
 
 const app = express();
+const apiRouter = express.Router();
 const PORT = 3001;
 
 app.use(cors());
 app.use(express.json());
 
-app.get("/", (req, res) => {
+apiRouter.get("/", (req, res) => {
     res.json({ message: "Сервер работает" });
 });
 
 // Пример использования базы в маршруте
-app.get("/test-db", async (req, res) => {
+apiRouter.get("/test-db", async (req, res) => {
     try {
         // Используем переменную db, которую импортировали выше
         const [rows] = await db.query("SELECT 1 + 1 AS result");
@@ -23,7 +24,7 @@ app.get("/test-db", async (req, res) => {
     }
 });
 
-app.post("/registration", (req, res) => {
+apiRouter.post("/registration", (req, res) => {
     const { login, password } = req.body;
 
     if (!login || !password) {
@@ -46,6 +47,8 @@ app.post("/registration", (req, res) => {
         message: "Логин или пароль введены неверно"
     });
 });
+
+app.use("/api", apiRouter);
 
 app.listen(PORT, () => {
     console.log(`Сервер запущен: http://localhost:${PORT}`);
