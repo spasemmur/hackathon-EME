@@ -1,5 +1,6 @@
 const express = require("express");
 const cors = require("cors");
+const db = require("./database-connection")
 
 const app = express();
 const PORT = 3001;
@@ -9,6 +10,17 @@ app.use(express.json());
 
 app.get("/", (req, res) => {
     res.json({ message: "Сервер работает" });
+});
+
+// Пример использования базы в маршруте
+app.get("/api/test-db", async (req, res) => {
+    try {
+        // Используем переменную db, которую импортировали выше
+        const [rows] = await db.query("SELECT 1 + 1 AS result");
+        res.json({ status: "Base is OK", data: rows });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
 });
 
 app.post("/registration", (req, res) => {
