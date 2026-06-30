@@ -3,21 +3,24 @@ import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import About from './About.jsx';
 import Profile from './Profile.jsx';
 import Statistics from './Statistics.jsx';
-import { registerUser, getServerMessage } from './api.js';
+import { registerUser, loginUser, getServerMessage } from './api.js';
 import './App.css';
+import galkaIcon from './assets/galka.png';
+import statIcon from './assets/stat.png';
+import chelIcon from './assets/chel.png';
 
 function Navigation() {
   return (
     <nav className="paper-nav">
 
-      <div className="nav-logo">
-        <div className="logo-tape"></div>
-        <h1>
-          Habit
-          <br />
-          Tracker
-        </h1>
-      </div>
+    <Link to="/" className="nav-logo-link">
+    <div className="nav-logo">
+    <div className="logo-tape"></div>
+    <h1>
+      Поток
+    </h1>
+    </div>
+    </Link>
 
       <div className="nav-links">
         <Link to="/" className="nav-link">Главная</Link>
@@ -48,7 +51,7 @@ function Home() {
         <div className="hero-left">
 
           <div className="stamp stamp-approved">
-            ORGANIZE YOUR LIFE
+            Организуй свою жизнь
           </div>
 
           <h1 className="paper-title hero-title">
@@ -106,33 +109,38 @@ function Home() {
       <div className="paper-features">
 
         <div className="feature-item soft-shadow">
-          <div className="feature-icon">✅</div>
-          <h3>Привычки</h3>
-          <p className="feature-text">
-            Добавляй ежедневные привычки
-            и отмечай выполнение.
-          </p>
+          <div className="feature-icon">
+            <img src={galkaIcon} alt="Привычки" className="icon-image" />
+            </div>
+            <h3>Привычки</h3>
+            <p className="feature-text">
+              Добавляй ежедневные привычки
+              и отмечай выполнение.
+            </p>
         </div>
 
         <div className="feature-item soft-shadow">
-          <div className="feature-icon">📊</div>
-          <h3>Статистика</h3>
-          <p className="feature-text">
-            Следи за сериями,
-            процентом выполнения
-            и прогрессом.
-          </p>
+          <div className="feature-icon">
+            <img src={statIcon} alt="Статистика" className="icon-image" />
+            </div>
+            <h3>Статистика</h3>
+            <p className="feature-text">
+              Следи за сериями,
+              процентом выполнения
+              и прогрессом.
+            </p>
         </div>
 
         <div className="feature-item soft-shadow">
-          <div className="feature-icon">🎯</div>
-          <h3>Цели</h3>
-          <p className="feature-text">
-            Формируй новые полезные
-            привычки постепенно.
-          </p>
+          <div className="feature-icon">
+            <img src={chelIcon} alt="Цели" className="icon-image" />
+            </div>
+            <h3>Цели</h3>
+            <p className="feature-text">
+              Формируй новые полезные
+              привычки постепенно.
+            </p>
         </div>
-
       </div>
 
     </section>
@@ -159,7 +167,7 @@ function Login({ onLogin }) {
   const handleLogin = async () => {
     try {
       setError('');
-      const data = await registerUser({ login: loginInput, password: passwordInput });
+      const data = await loginUser(loginInput, passwordInput);
       
       if (data.success) {
         if (rememberMe) {
@@ -185,8 +193,18 @@ function Login({ onLogin }) {
         setError('Заполните все поля');
         return;
       }
+
+      if (regPassword.length < 8) {
+      setError('Пароль должен быть минимум 8 символов');
+      return;
+    }
+  
+       if (regNickname.length < 3) {
+      setError('Никнейм должен быть минимум 3 символа');
+      return;
+    }
       
-      const data = await registerUser({
+      const result = await registerUser({
         login: regEmail,
         password: regPassword,
         nickname: regNickname,
@@ -286,6 +304,17 @@ function Login({ onLogin }) {
             {error && <div className="paper-error">{error}</div>}
             
             <div className="form-group">
+              <label className="paper-label">Никнейм:</label>
+              <input 
+                type="text" 
+                className="paper-input"
+                placeholder="Как к вам обращаться?"
+                value={regNickname}
+                onChange={(e) => setRegNickname(e.target.value)}
+              />
+            </div>
+
+            <div className="form-group">
               <label className="paper-label">Логин (Email):</label>
               <input 
                 type="email" 
@@ -307,16 +336,7 @@ function Login({ onLogin }) {
               />
             </div>
             
-            <div className="form-group">
-              <label className="paper-label">Никнейм:</label>
-              <input 
-                type="text" 
-                className="paper-input"
-                placeholder="Как вас звать?"
-                value={regNickname}
-                onChange={(e) => setRegNickname(e.target.value)}
-              />
-            </div>
+           
             
             <div className="form-group">
               <label className="paper-label">Пол:</label>
