@@ -31,7 +31,7 @@ exports.register = async (req, res) => {
             message: "Пользователь успешно создан",
             user: {
                 id: user.id,
-                username: user.username,
+                nickname: user.nickname,
                 email: user.email
             }
         });
@@ -66,7 +66,7 @@ exports.login = async (req, res) => {
             message: "Вход выполнен успешно",
             user: {
                 id: user.id,
-                username: user.username,
+                nickname: user.nickname,
                 email: user.email
             }
         });
