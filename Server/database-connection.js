@@ -1,31 +1,30 @@
 const { Sequelize } = require('sequelize');
-require('dotenv').config(); // Чтобы работали переменные из .env
+require('dotenv').config();
 
-const sequelize = new Sequelize('taskTracker_db', 'klounada', process.env.DB_PASSWORD, {
-    host: 'localhost',
-    dialect: 'mysql',
-    logging: false, // Отключаем лишний спам в консоли
-});
+// Создаем подключение через Sequelize
+// Мы берем данные из .env, чтобы не «светить» их в коде
+const sequelize = new Sequelize(
+    process.env.DB_NAME || 'taskTracker_db',
+    process.env.DB_USER || 'klounada',
+    process.env.DB_PASSWORD,
+    {
+        host: process.env.DB_HOST || 'localhost',
+        dialect: 'mysql',
+        logging: false, // Чтобы не засорять консоль SQL-запросами
+    }
+);
 
-// Проверка связи
-sequelize.authenticate()
-    .then(() => console.log('✅ База данных MySQL успешно подключена!'))
-    .catch(err => console.error('❌ Ошибка подключения к базе:', err));
-
-module.exports = sequelize;
-
-// Функция для мгновенной проверки связи
+// Функция для проверки связи (современный способ Sequelize)
 const testConnection = async () => {
     try {
-        const connection = await pool.getConnection();
-        console.log("✅ База данных MySQL успешно подключена!");
-        connection.release();
+        await sequelize.authenticate();
+        console.log('✅ База данных MySQL успешно подключена через Sequelize!');
     } catch (error) {
-        console.error("❌ Ошибка в файле db.js:", error.message);
+        console.error('❌ Ошибка подключения к базе:', error.message);
     }
 };
 
 testConnection();
 
-// Экспортируем pool, чтобы использовать его в app.js
-module.exports = pool;
+// Экспортируем только одну переменную - sequelize
+module.exports = sequelize;
