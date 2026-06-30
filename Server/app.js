@@ -10,4 +10,4 @@ app.use('/api', apiRouter);
 // POST http://localhost:3000/api/auth/register
 // POST http://localhost:3000/api/auth/login
 
-app.listen(3000, () => console.log('Server started'));
+app.listen(3001, () => console.log('Server started'));
