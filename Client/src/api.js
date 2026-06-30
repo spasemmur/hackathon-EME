@@ -10,10 +10,10 @@ export const registerUser = async (userData) => {
       },
       body: JSON.stringify({
         nickname: userData.nickname,
-        email: userData.login,           // ← login → email
+        email: userData.email,           // ← login → email
         password: userData.password,
-        sex: userData.gender === 'male' ? 1 : 2,  // ← gender → sex (число)
-        birthdate: userData.birthDate    // ← birthDate → birthdate
+        sex: userData.sex === 'male' ? 1 : 2,  // ← gender → sex (число)
+        birthdate: userData.birthdate    // ← birthDate → birthdate
       }),
     });
 
