@@ -189,18 +189,13 @@ function Login({ onLogin }) {
     try {
       setError('');
 
-      // 1. Сначала проверяем поля локально (чтобы не гонять запросы зря)
+      // 1. Простая проверка на пустые поля (локально)
       if (!regEmail || !regPassword || !regNickname || !regGender || !regBirthDate) {
         setError('Заполните все поля');
         return;
       }
 
-      if (regPassword.length < 8) {
-        setError('Пароль должен быть минимум 8 символов');
-        return;
-      }
-
-      // 2. Делаем ОДИН правильный запрос, передавая ОБЪЕКТ
+      // 2. ОДИН запрос к серверу. Сохраняем ответ именно в 'data'
       const data = await registerUser({
         login: regEmail,
         password: regPassword,
@@ -209,12 +204,14 @@ function Login({ onLogin }) {
         birthDate: regBirthDate
       });
 
-      // 3. Теперь переменная 'data' точно существует и содержит ответ
+      // 3. Теперь 'data' определена и мы её проверяем
       if (data.success) {
-        setBannerMessage(`🎉 ${data.message || 'Успешная регистрация!'}`);
+        // Если в бэкенде поле называется message, будет текст. 
+        // Если нет - выведется стандартная фраза.
+        setBannerMessage(`🎉 ${data.message || 'Регистрация прошла успешно!'}`);
         setShowBanner(true);
 
-        // Очищаем поля
+        // Очищаем форму
         setRegEmail('');
         setRegPassword('');
         setRegNickname('');
@@ -227,7 +224,7 @@ function Login({ onLogin }) {
         setError(data.message || 'Ошибка регистрации');
       }
     } catch (err) {
-      // Если сервер прислал ошибку, она попадет сюда
+      // Сюда попадут ошибки типа "Email занят" или ошибки сети
       setError(err.message);
     }
   };
