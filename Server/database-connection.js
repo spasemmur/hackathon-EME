@@ -1,16 +1,18 @@
-require('dotenv').config();
-const mysql = require("mysql2/promise");
+const { Sequelize } = require('sequelize');
+require('dotenv').config(); // Чтобы работали переменные из .env
 
-// Создаем пул соединений
-const pool = mysql.createPool({
-    host: process.env.DB_HOST,
-    user: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
-    database: process.env.DB_NAME,
-    waitForConnections: true,
-    connectionLimit: 10,
-    queueLimit: 0
+const sequelize = new Sequelize('taskTracker_db', 'klounada', process.env.DB_PASSWORD, {
+    host: 'localhost',
+    dialect: 'mysql',
+    logging: false, // Отключаем лишний спам в консоли
 });
+
+// Проверка связи
+sequelize.authenticate()
+    .then(() => console.log('✅ База данных MySQL успешно подключена!'))
+    .catch(err => console.error('❌ Ошибка подключения к базе:', err));
+
+module.exports = sequelize;
 
 // Функция для мгновенной проверки связи
 const testConnection = async () => {
