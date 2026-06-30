@@ -1,5 +1,5 @@
 const User = require('../models/User');
-const bcrypt = require("bcryptjs")
+const bcrypt = require('bcryptjs');
 const { z } = require('zod');
 
 // Схема валидации входящих данных через Zod
