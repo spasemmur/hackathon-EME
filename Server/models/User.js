@@ -8,13 +8,9 @@ const User = sequelize.define('User', {
         primaryKey: true,
         autoIncrement: true,
     },
-    username: {
+    nickname: {
         type: DataTypes.STRING(50),
         unique: true,
-    },
-    password: {
-        type: DataTypes.STRING(255), // Bcrypt создаст длинную строку, поэтому 255
-        allowNull: false,
     },
     email: {
         type: DataTypes.STRING(100),
@@ -22,12 +18,16 @@ const User = sequelize.define('User', {
         allowNull: false,
         validate: { isEmail: true }
     },
-    birthdate: {
-        type: DataTypes.DATEONLY, // Формат YYYY-MM-DD
+    password: {
+        type: DataTypes.STRING(255), // Bcrypt создаст длинную строку, поэтому 255
+        allowNull: false,
     },
     sex: {
         type: DataTypes.TINYINT(1),
         defaultValue: 0, // 0 - не указан, 1 - муж, 2 - жен
+    },
+    birthdate: {
+        type: DataTypes.DATEONLY, // Формат YYYY-MM-DD
     }
 }, {
     tableName: 'users', // Точное имя таблицы в MySQL

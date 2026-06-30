@@ -3,7 +3,7 @@ const { z } = require('zod');
 
 // Схема валидации входящих данных через Zod
 const registerSchema = z.object({
-    username: z.string().min(3, "Имя слишком короткое"),
+    nickname: z.string().min(3, "Имя слишком короткое"),
     email: z.string().email("Неверный формат почты"),
     password: z.string().min(8, "Пароль минимум 8 символов"),
     sex: z.number().min(0).max(2).optional(),
