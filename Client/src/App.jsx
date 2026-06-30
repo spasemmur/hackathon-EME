@@ -13,14 +13,14 @@ function Navigation() {
   return (
     <nav className="paper-nav">
 
-    <Link to="/" className="nav-logo-link">
-    <div className="nav-logo">
-    <div className="logo-tape"></div>
-    <h1>
-      Поток
-    </h1>
-    </div>
-    </Link>
+      <Link to="/" className="nav-logo-link">
+        <div className="nav-logo">
+          <div className="logo-tape"></div>
+          <h1>
+            Поток
+          </h1>
+        </div>
+      </Link>
 
       <div className="nav-links">
         <Link to="/" className="nav-link">Главная</Link>
@@ -111,35 +111,35 @@ function Home() {
         <div className="feature-item soft-shadow">
           <div className="feature-icon">
             <img src={galkaIcon} alt="Привычки" className="icon-image" />
-            </div>
-            <h3>Привычки</h3>
-            <p className="feature-text">
-              Добавляй ежедневные привычки
-              и отмечай выполнение.
-            </p>
+          </div>
+          <h3>Привычки</h3>
+          <p className="feature-text">
+            Добавляй ежедневные привычки
+            и отмечай выполнение.
+          </p>
         </div>
 
         <div className="feature-item soft-shadow">
           <div className="feature-icon">
             <img src={statIcon} alt="Статистика" className="icon-image" />
-            </div>
-            <h3>Статистика</h3>
-            <p className="feature-text">
-              Следи за сериями,
-              процентом выполнения
-              и прогрессом.
-            </p>
+          </div>
+          <h3>Статистика</h3>
+          <p className="feature-text">
+            Следи за сериями,
+            процентом выполнения
+            и прогрессом.
+          </p>
         </div>
 
         <div className="feature-item soft-shadow">
           <div className="feature-icon">
             <img src={chelIcon} alt="Цели" className="icon-image" />
-            </div>
-            <h3>Цели</h3>
-            <p className="feature-text">
-              Формируй новые полезные
-              привычки постепенно.
-            </p>
+          </div>
+          <h3>Цели</h3>
+          <p className="feature-text">
+            Формируй новые полезные
+            привычки постепенно.
+          </p>
         </div>
       </div>
 
@@ -153,14 +153,14 @@ function Login({ onLogin }) {
   const [successMessage, setSuccessMessage] = useState('');
   const [showBanner, setShowBanner] = useState(false);
   const [bannerMessage, setBannerMessage] = useState('');
-  
+
   const [loginInput, setLoginInput] = useState('');
   const [passwordInput, setPasswordInput] = useState('');
   const [rememberMe, setRememberMe] = useState(false);
-  
+
+  const [regNickname, setRegNickname] = useState('');
   const [regEmail, setRegEmail] = useState('');
   const [regPassword, setRegPassword] = useState('');
-  const [regNickname, setRegNickname] = useState('');
   const [regGender, setRegGender] = useState('');
   const [regBirthDate, setRegBirthDate] = useState('');
 
@@ -168,7 +168,7 @@ function Login({ onLogin }) {
     try {
       setError('');
       const data = await loginUser(loginInput, passwordInput);
-      
+
       if (data.success) {
         if (rememberMe) {
           localStorage.setItem('rememberedLogin', loginInput);
@@ -188,22 +188,23 @@ function Login({ onLogin }) {
   const handleRegister = async () => {
     try {
       setError('');
-      
+      const data = await registerUser(regNickname, regEmail, regPassword, regGender, regBirthDate);
+
       if (!regEmail || !regPassword || !regNickname || !regGender || !regBirthDate) {
         setError('Заполните все поля');
         return;
       }
 
       if (regPassword.length < 8) {
-      setError('Пароль должен быть минимум 8 символов');
-      return;
-    }
-  
-       if (regNickname.length < 3) {
-      setError('Никнейм должен быть минимум 3 символа');
-      return;
-    }
-      
+        setError('Пароль должен быть минимум 8 символов');
+        return;
+      }
+
+      if (regNickname.length < 3) {
+        setError('Никнейм должен быть минимум 3 символа');
+        return;
+      }
+
       const result = await registerUser({
         login: regEmail,
         password: regPassword,
@@ -211,18 +212,18 @@ function Login({ onLogin }) {
         gender: regGender,
         birthDate: regBirthDate
       });
-      
+
       if (data.success) {
         setBannerMessage(`🎉 ${data.message}`);
         setShowBanner(true);
-        
+
         setRegEmail('');
         setRegPassword('');
         setRegNickname('');
         setRegGender('');
         setRegBirthDate('');
         setShowRegister(false);
-        
+
         setTimeout(() => setShowBanner(false), 5000);
       } else {
         setError(data.message || 'Ошибка регистрации');
@@ -247,40 +248,40 @@ function Login({ onLogin }) {
       <div className="paper-card auth-card torn-edge">
         <div className="tape tape-top-center"></div>
         <div className="paper-crease"></div>
-        
+
         {!showRegister ? (
           <>
             <h2 className="paper-title">Вход в аккаунт</h2>
-            
+
             {error && <div className="paper-error">{error}</div>}
             {successMessage && <div className="paper-success">{successMessage}</div>}
-            
+
             <div className="form-group">
               <label className="paper-label">Логин:</label>
-              <input 
-                type="text" 
+              <input
+                type="text"
                 className="paper-input"
                 placeholder="Введите логин"
                 value={loginInput}
                 onChange={(e) => setLoginInput(e.target.value)}
               />
             </div>
-            
+
             <div className="form-group">
               <label className="paper-label">Пароль:</label>
-              <input 
-                type="password" 
+              <input
+                type="password"
                 className="paper-input"
                 placeholder="Введите пароль"
                 value={passwordInput}
                 onChange={(e) => setPasswordInput(e.target.value)}
               />
             </div>
-            
+
             <div className="remember-me">
               <label className="checkbox-container">
-                <input 
-                  type="checkbox" 
+                <input
+                  type="checkbox"
                   checked={rememberMe}
                   onChange={(e) => setRememberMe(e.target.checked)}
                 />
@@ -292,7 +293,7 @@ function Login({ onLogin }) {
             <button className="paper-btn primary-btn glued-btn" onClick={handleLogin}>
               Войти
             </button>
-            
+
             <button className="paper-btn secondary-btn" onClick={() => setShowRegister(true)}>
               Создать аккаунт
             </button>
@@ -300,13 +301,13 @@ function Login({ onLogin }) {
         ) : (
           <>
             <h2 className="paper-title">Регистрация</h2>
-            
+
             {error && <div className="paper-error">{error}</div>}
-            
+
             <div className="form-group">
               <label className="paper-label">Никнейм:</label>
-              <input 
-                type="text" 
+              <input
+                type="text"
                 className="paper-input"
                 placeholder="Как к вам обращаться?"
                 value={regNickname}
@@ -316,31 +317,31 @@ function Login({ onLogin }) {
 
             <div className="form-group">
               <label className="paper-label">Логин (Email):</label>
-              <input 
-                type="email" 
+              <input
+                type="email"
                 className="paper-input"
                 placeholder="example@mail.ru"
                 value={regEmail}
                 onChange={(e) => setRegEmail(e.target.value)}
               />
             </div>
-            
+
             <div className="form-group">
               <label className="paper-label">Пароль:</label>
-              <input 
-                type="password" 
+              <input
+                type="password"
                 className="paper-input"
                 placeholder="Придумайте пароль"
                 value={regPassword}
                 onChange={(e) => setRegPassword(e.target.value)}
               />
             </div>
-            
-           
-            
+
+
+
             <div className="form-group">
               <label className="paper-label">Пол:</label>
-              <select 
+              <select
                 className="paper-input"
                 value={regGender}
                 onChange={(e) => setRegGender(e.target.value)}
@@ -350,21 +351,21 @@ function Login({ onLogin }) {
                 <option value="female">Женский</option>
               </select>
             </div>
-            
+
             <div className="form-group">
               <label className="paper-label">Дата рождения:</label>
-              <input 
-                type="date" 
+              <input
+                type="date"
                 className="paper-input"
                 value={regBirthDate}
                 onChange={(e) => setRegBirthDate(e.target.value)}
               />
             </div>
-            
+
             <button className="paper-btn primary-btn glued-btn" onClick={handleRegister}>
               Зарегистрироваться
             </button>
-            
+
             <button className="paper-btn secondary-btn" onClick={() => setShowRegister(false)}>
               Назад ко входу
             </button>
@@ -404,7 +405,7 @@ function App() {
     <Router>
       <div className="app craft-paper-bg">
         <Navigation />
-        
+
         <main className="main-content">
           <Routes>
             <Route path="/" element={<Home />} />
