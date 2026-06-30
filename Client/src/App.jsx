@@ -188,8 +188,8 @@ function Login({ onLogin }) {
   const handleRegister = async () => {
     try {
       setError('');
-      const data = await registerUser(regNickname, regEmail, regPassword, regGender, regBirthDate);
 
+      // 1. Сначала проверяем поля локально (чтобы не гонять запросы зря)
       if (!regEmail || !regPassword || !regNickname || !regGender || !regBirthDate) {
         setError('Заполните все поля');
         return;
@@ -200,12 +200,8 @@ function Login({ onLogin }) {
         return;
       }
 
-      if (regNickname.length < 3) {
-        setError('Никнейм должен быть минимум 3 символа');
-        return;
-      }
-
-      const result = await registerUser({
+      // 2. Делаем ОДИН правильный запрос, передавая ОБЪЕКТ
+      const data = await registerUser({
         login: regEmail,
         password: regPassword,
         nickname: regNickname,
@@ -213,10 +209,12 @@ function Login({ onLogin }) {
         birthDate: regBirthDate
       });
 
+      // 3. Теперь переменная 'data' точно существует и содержит ответ
       if (data.success) {
-        setBannerMessage(`🎉 ${data.message}`);
+        setBannerMessage(`🎉 ${data.message || 'Успешная регистрация!'}`);
         setShowBanner(true);
 
+        // Очищаем поля
         setRegEmail('');
         setRegPassword('');
         setRegNickname('');
@@ -229,6 +227,7 @@ function Login({ onLogin }) {
         setError(data.message || 'Ошибка регистрации');
       }
     } catch (err) {
+      // Если сервер прислал ошибку, она попадет сюда
       setError(err.message);
     }
   };
