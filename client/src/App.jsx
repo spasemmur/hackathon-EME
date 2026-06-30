@@ -5,6 +5,9 @@ import Profile from './Profile.jsx';
 import Statistics from './Statistics.jsx';
 import { registerUser, loginUser, getServerMessage } from './api.js';
 import './App.css';
+import galkaIcon from './assets/galka.png';
+import statIcon from './assets/stat.png';
+import chelIcon from './assets/chel.png';
 
 function Navigation() {
   return (
@@ -106,33 +109,38 @@ function Home() {
       <div className="paper-features">
 
         <div className="feature-item soft-shadow">
-          <div className="feature-icon">✅</div>
-          <h3>Привычки</h3>
-          <p className="feature-text">
-            Добавляй ежедневные привычки
-            и отмечай выполнение.
-          </p>
+          <div className="feature-icon">
+            <img src={galkaIcon} alt="Привычки" className="icon-image" />
+            </div>
+            <h3>Привычки</h3>
+            <p className="feature-text">
+              Добавляй ежедневные привычки
+              и отмечай выполнение.
+            </p>
         </div>
 
         <div className="feature-item soft-shadow">
-          <div className="feature-icon">📊</div>
-          <h3>Статистика</h3>
-          <p className="feature-text">
-            Следи за сериями,
-            процентом выполнения
-            и прогрессом.
-          </p>
+          <div className="feature-icon">
+            <img src={statIcon} alt="Статистика" className="icon-image" />
+            </div>
+            <h3>Статистика</h3>
+            <p className="feature-text">
+              Следи за сериями,
+              процентом выполнения
+              и прогрессом.
+            </p>
         </div>
 
         <div className="feature-item soft-shadow">
-          <div className="feature-icon">🎯</div>
-          <h3>Цели</h3>
-          <p className="feature-text">
-            Формируй новые полезные
-            привычки постепенно.
-          </p>
+          <div className="feature-icon">
+            <img src={chelIcon} alt="Цели" className="icon-image" />
+            </div>
+            <h3>Цели</h3>
+            <p className="feature-text">
+              Формируй новые полезные
+              привычки постепенно.
+            </p>
         </div>
-
       </div>
 
     </section>
@@ -185,6 +193,16 @@ function Login({ onLogin }) {
         setError('Заполните все поля');
         return;
       }
+
+      if (regPassword.length < 8) {
+      setError('Пароль должен быть минимум 8 символов');
+      return;
+    }
+  
+       if (regNickname.length < 3) {
+      setError('Никнейм должен быть минимум 3 символа');
+      return;
+    }
       
       const result = await registerUser({
         login: regEmail,

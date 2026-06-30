@@ -1,44 +1,49 @@
 const API_URL = "http://5.42.110.101:3001";
 
-// Регистрация — отправляем ВСЕ поля
+// Регистрация — адаптируем поля под бэкенд
 export const registerUser = async (userData) => {
   try {
-    const response = await fetch(`${API_URL}/registration`, {
+    const response = await fetch(`${API_URL}/api/auth/register`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        login: userData.login,          // email
-        password: userData.password,
         nickname: userData.nickname,
-        gender: userData.gender,
-        birthDate: userData.birthDate
+        email: userData.login,           // ← login → email
+        password: userData.password,
+        sex: userData.gender === 'male' ? 1 : 2,  // ← gender → sex (число)
+        birthdate: userData.birthDate    // ← birthDate → birthdate
       }),
     });
 
     const data = await response.json();
 
     if (!response.ok) {
+      // Бэкенд может вернуть ошибки валидации
+      if (data.errors) {
+        const messages = data.errors.map(e => e.message).join(', ');
+        throw new Error(messages);
+      }
       throw new Error(data.message || 'Ошибка регистрации');
     }
 
-    return data;
+    return { success: true, ...data };  // ← добавляем success для совместимости
   } catch (error) {
     console.error('Ошибка:', error);
     throw error;
   }
 };
 
-// Вход — только логин и пароль
-export const loginUser = async (login, password) => {
+// Вход — бэкенд ждёт email, а не login
+export const loginUser = async (email, password) => {
   try {
-    const response = await fetch(`${API_URL}/registration`, {
+    const response = await fetch(`${API_URL}/api/auth/login`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ login, password }),
+      body: JSON.stringify({ email, password }),  // ← email вместо login
     });
 
     const data = await response.json();
@@ -47,7 +52,7 @@ export const loginUser = async (login, password) => {
       throw new Error(data.message || 'Ошибка входа');
     }
 
-    return data;
+    return { success: true, ...data };  // ← добавляем success
   } catch (error) {
     console.error('Ошибка:', error);
     throw error;

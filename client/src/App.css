@@ -283,6 +283,14 @@
     line-height: 1.5;
 }
 
+.icon-image {
+  width: 120px;
+  height: 120px;
+  object-fit: contain;
+  display: block;
+  margin: 0 auto;
+}
+
 /* ---------- КНОПКИ ---------- */
 
 .paper-btn {
