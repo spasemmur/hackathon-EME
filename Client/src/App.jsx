@@ -197,11 +197,11 @@ function Login({ onLogin }) {
 
       // 2. ОДИН запрос к серверу. Сохраняем ответ именно в 'data'
       const data = await registerUser({
-        login: regEmail,
-        password: regPassword,
         nickname: regNickname,
-        gender: regGender,
-        birthDate: regBirthDate
+        email: regEmail,
+        password: regPassword,
+        sex: regGender,
+        birthdate: regBirthDate
       });
 
       // 3. Теперь 'data' определена и мы её проверяем
