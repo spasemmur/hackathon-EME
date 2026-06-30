@@ -43,3 +43,35 @@ exports.register = async (req, res) => {
         res.status(500).json({ message: "Ошибка сервера при регистрации" });
     }
 };
+
+exports.login = async (req, res) => {
+    try {
+        const { email, password } = req.body;
+
+        // 1. Ищем пользователя по почте
+        const user = await User.findOne({ where: { email } });
+        if (!user) {
+            return res.status(401).json({ message: "Пользователь с такой почтой не найден" });
+        }
+
+        // 2. Сравниваем пароли (введенный и захешированный из базы)
+        const isPasswordValid = await bcrypt.compare(password, user.password);
+        if (!isPasswordValid) {
+            return res.status(401).json({ message: "Неверный пароль" });
+        }
+
+        // 3. Если всё ок (здесь обычно создают JWT токен, но для начала можно просто вернуть успех)
+        res.json({
+            message: "Вход выполнен успешно",
+            user: {
+                id: user.id,
+                username: user.username,
+                email: user.email
+            }
+        });
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Ошибка сервера при входе" });
+    }
+};
