@@ -55,8 +55,8 @@ function About() {
               <div className="stamp stamp-approved" style={{ position: 'absolute', top: '10px', right: '10px', fontSize: '0.7rem' }}>
                 TEAM
               </div>
-              <div className="dev-icon">
-                <img src={dev.icon} alt={dev.name} className="dev-icon-image" />
+              <div className="about-dev-icon">
+                <img src={dev.icon} alt={dev.name} />
               </div>
               <h4 className="dev-name">{dev.name}</h4>
               <p className="dev-role">{dev.role}</p>

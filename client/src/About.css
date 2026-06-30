@@ -121,9 +121,19 @@
   color: #888;
 }
 
-.dev-icon-image {
-  width: 20px;
-  height: 20px;
+.about-dev-icon {
+  width: 100px;
+  height: 100px;
+  margin: 0 auto 15px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+
+.about-dev-icon img {
+  width: 80px;
+  height: 80px;
   object-fit: contain;
   display: block;
   margin: 0 auto;
