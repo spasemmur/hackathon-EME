@@ -62,7 +62,7 @@ export const loginUser = async (email, password) => {
 // Получение сообщения с сервера
 export const getServerMessage = async () => {
   try {
-    const response = await fetch(`${API_URL}/api/`);
+    const response = await fetch(`${API_URL}/api`);
     const data = await response.json();
     return data;
   } catch (error) {
