@@ -46,6 +46,16 @@
     box-shadow: 0 12px 25px rgba(0, 0, 0, .15);
 }
 
+.nav-logo-link {
+  text-decoration: none;
+  color: inherit;
+  display: inline-block;
+}
+
+.nav-logo-link:hover .nav-logo {
+  transform: rotate(0deg) scale(1.02);
+}
+
 .logo-tape {
     position: absolute;
     width: 80px;

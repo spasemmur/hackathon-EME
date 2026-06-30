@@ -3,21 +3,21 @@ import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import About from './About.jsx';
 import Profile from './Profile.jsx';
 import Statistics from './Statistics.jsx';
-import { registerUser, getServerMessage } from './api.js';
+import { registerUser, loginUser, getServerMessage } from './api.js';
 import './App.css';
 
 function Navigation() {
   return (
     <nav className="paper-nav">
 
-      <div className="nav-logo">
-        <div className="logo-tape"></div>
-        <h1>
-          Habit
-          <br />
-          Tracker
-        </h1>
-      </div>
+    <Link to="/" className="nav-logo-link">
+    <div className="nav-logo">
+    <div className="logo-tape"></div>
+    <h1>
+      Поток
+    </h1>
+    </div>
+    </Link>
 
       <div className="nav-links">
         <Link to="/" className="nav-link">Главная</Link>
@@ -48,7 +48,7 @@ function Home() {
         <div className="hero-left">
 
           <div className="stamp stamp-approved">
-            ORGANIZE YOUR LIFE
+            Организуй свою жизнь
           </div>
 
           <h1 className="paper-title hero-title">
@@ -159,7 +159,7 @@ function Login({ onLogin }) {
   const handleLogin = async () => {
     try {
       setError('');
-      const data = await registerUser({ login: loginInput, password: passwordInput });
+      const data = await loginUser(loginInput, passwordInput);
       
       if (data.success) {
         if (rememberMe) {
@@ -186,7 +186,7 @@ function Login({ onLogin }) {
         return;
       }
       
-      const data = await registerUser({
+      const result = await registerUser({
         login: regEmail,
         password: regPassword,
         nickname: regNickname,
@@ -286,6 +286,17 @@ function Login({ onLogin }) {
             {error && <div className="paper-error">{error}</div>}
             
             <div className="form-group">
+              <label className="paper-label">Никнейм:</label>
+              <input 
+                type="text" 
+                className="paper-input"
+                placeholder="Как к вам обращаться?"
+                value={regNickname}
+                onChange={(e) => setRegNickname(e.target.value)}
+              />
+            </div>
+
+            <div className="form-group">
               <label className="paper-label">Логин (Email):</label>
               <input 
                 type="email" 
@@ -307,16 +318,7 @@ function Login({ onLogin }) {
               />
             </div>
             
-            <div className="form-group">
-              <label className="paper-label">Никнейм:</label>
-              <input 
-                type="text" 
-                className="paper-input"
-                placeholder="Как вас звать?"
-                value={regNickname}
-                onChange={(e) => setRegNickname(e.target.value)}
-              />
-            </div>
+           
             
             <div className="form-group">
               <label className="paper-label">Пол:</label>
