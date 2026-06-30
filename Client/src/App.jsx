@@ -194,6 +194,15 @@ function Login({ onLogin }) {
         setError('Заполните все поля');
         return;
       }
+      if (regPassword.length < 8) {
+        setError('Пароль должен быть минимум 8 символов');
+        return;
+      }
+
+      if (regNickname.length < 3) {
+        setError('Никнейм должен быть минимум 3 символа');
+        return;
+      }
 
       // 2. ОДИН запрос к серверу. Сохраняем ответ именно в 'data'
       const data = await registerUser({
