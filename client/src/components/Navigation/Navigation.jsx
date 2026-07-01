@@ -1,7 +1,8 @@
 import { Link } from 'react-router-dom';
+import ProfileDropdown from '../Profile/ProfileDropdown';
 import './Navigation.css';
 
-function Navigation({ isLoggedIn, onLogout, nickname }) {
+function Navigation({ isLoggedIn, onLogout, user }) {
   return (
     <nav className="paper-nav">
       <Link to="/" className="nav-logo-link">
@@ -12,23 +13,15 @@ function Navigation({ isLoggedIn, onLogout, nickname }) {
       </Link>
 
       <div className="nav-links">
-        {isLoggedIn ? (
-          <>
-            <Link to="/profile" className="nav-link">
-              {nickname || 'Профиль'}
-            </Link>
-            <button className="paper-btn secondary-btn nav-logout" onClick={onLogout}>
-              Выйти
-            </button>
-          </>
-        ) : (
-          <>
-            <Link to="/about" className="nav-link">О проекте</Link>
-            <Link to="/login" className="paper-btn primary-btn">
-              Войти
-            </Link>
-          </>
+        {!isLoggedIn && (
+          <Link to="/about" className="nav-link">О проекте</Link>
         )}
+
+        <ProfileDropdown
+          user={user}
+          isLoggedIn={isLoggedIn}
+          onLogout={onLogout}
+        />
       </div>
     </nav>
   );

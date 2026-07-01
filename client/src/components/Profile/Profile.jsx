@@ -8,7 +8,6 @@ function Profile({ user, isLoggedIn }) {
         <div className="paper-card torn-edge">
           <div className="tape tape-top-center"></div>
           <div className="paper-crease"></div>
-
           <div className="empty-state">
             <div className="empty-icon">👤</div>
             <h2 className="paper-title">Профиль</h2>

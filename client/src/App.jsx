@@ -17,10 +17,20 @@ function App() {
       if (localStorage.getItem('token')) {
         try {
           const data = await getProfile();
-          setUser(data);
+          console.log('📥 Данные от сервера:', data); // ← для отладки
+
+          // ✅ ИЗВЛЕКИ user из ответа
+          setUser({
+            nickname: data.user?.nickname,
+            email: data.user?.email,
+            id: data.user?.id
+          });
           setIsAuth(true);
         } catch (e) {
-          console.log("Сессия истекла");
+          console.error("❌ Сессия истекла:", e);
+          localStorage.removeItem('token');
+          setUser(null);
+          setIsAuth(false);
         }
       }
     };
@@ -48,9 +58,9 @@ function App() {
     <Router>
       <div className="app craft-paper-bg">
         <Navigation
-          isLoggedIn={isAuth}           // ✅ было: isLoggedIn
-          onLogout={handleLogout}        // ✅ теперь существует
-          nickname={user?.nickname}      // ✅ было: currentUser
+          isLoggedIn={isAuth}
+          onLogout={handleLogout}
+          user={user}        // ✅ передаём весь объект user вместо nickname
         />
 
         <main className="main-content">

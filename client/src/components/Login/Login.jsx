@@ -32,8 +32,9 @@ function Login({ onLogin }) {
           localStorage.setItem('rememberedLogin', loginInput);
         }
         // ✅ передаём нормализованные данные
+        // В handleLogin:
         onLogin({
-          nickname: data.user?.username || data.user?.nickname || loginInput,
+          nickname: data.user?.nickname || loginInput,
           email: data.user?.email,
           id: data.user?.id
         });
@@ -89,9 +90,9 @@ function Login({ onLogin }) {
       });
 
       if (result.success) {
-        // ✅ автовход после регистрации
+        // ✅ ОСТАВЬ ТОЛЬКО ОДИН ВЫЗОВ:
         onLogin({
-          nickname: result.user?.username || result.user?.nickname,
+          nickname: result.user?.nickname,
           email: result.user?.email,
           id: result.user?.id
         });
