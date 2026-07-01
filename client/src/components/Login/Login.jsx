@@ -58,11 +58,6 @@ function Login({ onLogin }) {
         setError('Никнейм должен быть минимум 3 символа');
         return;
       }
-      if (data.success) {
-        localStorage.setItem('token', data.token); // сохраняем токен
-        onLogin({ login: data.user.email, nickname: data.user.username }); // сразу входим
-        // остальной код (баннер, очистка формы)...
-      }
 
       const result = await registerUser({
         email: regEmail,
