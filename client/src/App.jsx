@@ -1,14 +1,11 @@
 import { useState, useEffect } from 'react';
-import { getProfile } from './api';
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
-import About from './About.jsx';
-import Profile from './Profile.jsx';
-import Statistics from './Statistics.jsx';
-import { registerUser, loginUser, getServerMessage } from './api.js';
-import './App.css';
-import galkaIcon from './assets/galka.png';
-import statIcon from './assets/stat.png';
-import chelIcon from './assets/chel.png';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import Navigation from './components/Navigation/Navigation.jsx';
+import Home from './components/Home/Home.jsx';
+import About from './components/About/About.jsx';
+import Login from './components/Login/Login.jsx';
+import Profile from './components/Profile/Profile.jsx';
+import './shared/shared.css';
 
 
 function Navigation() {
