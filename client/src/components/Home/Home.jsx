@@ -1,60 +1,56 @@
-import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { getServerMessage } from '../../api.js';
-import galkaIcon from '../../assets/galka.png';
-import statIcon from '../../assets/stat.png';
-import chelIcon from '../../assets/chel.png';
 import './Home.css';
 
+// Иконки для фич (можно заменить на свои картинки)
+const featureIcons = {
+  tasks: '📋',
+  progress: '📊',
+  goals: '🎯',
+  achievements: '⭐',
+  focus: '🎯',
+  habits: '🕐',
+  visual: '📈',
+  motivation: '🏆'
+};
+
 function Home() {
-  const [serverMessage, setServerMessage] = useState("");
-
-  useEffect(() => {
-    getServerMessage()
-      .then((data) => setServerMessage(data.message))
-      .catch(() => setServerMessage(""));
-  }, []);
-
   return (
-    <section className="paper-page">
+    <section className="paper-page home-page">
+      
+      {/* ===== HERO СЕКЦИЯ ===== */}
       <div className="hero-section">
-        <div className="hero-left">
-          <div className="stamp stamp-approved">
-            Организуй свою жизнь
-          </div>
-
-          <h1 className="paper-title hero-title">
-            Создавай<br />
-            полезные<br />
-            привычки
+        
+        <div className="hero-paper">
+          <div className="tape tape-top-left"></div>
+          
+          <h1 className="hero-title">
+            Ваш путь<br />
+            к продуктивности
           </h1>
-
-          <p className="paper-text hero-text">
-            Следи за ежедневными привычками,
-            анализируй прогресс и постепенно
-            достигай своих целей.
+          
+          <p className="hero-description">
+            Поток — это трекер задач и привычек, который помогает вам 
+            фокусироваться на важном, отслеживать прогресс и достигать целей.
           </p>
-
-          {serverMessage && (
-            <div className="paper-note">
-              <span className="note-icon">📌</span>
-              <span>{serverMessage}</span>
-            </div>
-          )}
-
-          <Link to="/login" className="paper-btn primary-btn glued-btn">
-            Начать →
+          
+          <Link to="/login" className="paper-btn primary-btn glued-btn hero-btn">
+            Начать бесплатно
           </Link>
         </div>
 
-        <div className="hero-right">
-          <div className="paper-scene">
+        {/* Декоративная сцена справа */}
+        <div className="hero-scene">
+          <div className="scene-sky">
             <div className="scene-sun"></div>
             <div className="scene-cloud cloud-1"></div>
             <div className="scene-cloud cloud-2"></div>
+          </div>
+          <div className="scene-mountains">
             <div className="mountain mountain-1"></div>
             <div className="mountain mountain-2"></div>
             <div className="mountain mountain-3"></div>
+          </div>
+          <div className="scene-ground">
             <div className="tree tree-1"></div>
             <div className="tree tree-2"></div>
             <div className="tree tree-3"></div>
@@ -63,41 +59,88 @@ function Home() {
         </div>
       </div>
 
-      <div className="paper-features">
-        <div className="feature-item soft-shadow">
-          <div className="feature-icon">
-            <img src={galkaIcon} alt="Привычки" className="icon-image" />
+      {/* ===== БУМАЖКА С ФИЧАМИ ПОСЛЕ ВХОДА ===== */}
+      <div className="features-paper">
+        <div className="tape tape-top-right"></div>
+        
+        <p className="features-intro">После входа вам станут доступны:</p>
+        
+        <div className="features-row">
+          <div className="feature-bubble">
+            <div className="feature-bubble-icon">{featureIcons.tasks}</div>
+            <div className="feature-bubble-text">
+              <strong>Задачи</strong>
+              <span>Планируйте и выполняйте</span>
+            </div>
           </div>
-          <h3>Привычки</h3>
-          <p className="feature-text">
-            Добавляй ежедневные привычки
-            и отмечай выполнение.
+
+          <div className="feature-bubble">
+            <div className="feature-bubble-icon">{featureIcons.progress}</div>
+            <div className="feature-bubble-text">
+              <strong>Прогресс</strong>
+              <span>Отслеживайте результаты</span>
+            </div>
+          </div>
+
+          <div className="feature-bubble">
+            <div className="feature-bubble-icon">{featureIcons.goals}</div>
+            <div className="feature-bubble-text">
+              <strong>Цели</strong>
+              <span>Достигайте большего</span>
+            </div>
+          </div>
+
+          <div className="feature-bubble">
+            <div className="feature-bubble-icon">{featureIcons.achievements}</div>
+            <div className="feature-bubble-text">
+              <strong>Достижения</strong>
+              <span>Получайте награды</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* ===== СЕКЦИЯ "ПОЧЕМУ ПОТОК?" ===== */}
+      <h2 className="section-title why-title">Почему Поток?</h2>
+
+      <div className="why-grid">
+        <div className="why-card soft-shadow">
+          <div className="tape tape-top-center"></div>
+          <div className="why-icon">{featureIcons.focus}</div>
+          <h3 className="why-card-title">Фокус на важном</h3>
+          <p className="why-card-text">
+            Сконцентрируйтесь на задачах, которые приближают вас к целям.
           </p>
         </div>
 
-        <div className="feature-item soft-shadow">
-          <div className="feature-icon">
-            <img src={statIcon} alt="Статистика" className="icon-image" />
-          </div>
-          <h3>Статистика</h3>
-          <p className="feature-text">
-            Следи за сериями,
-            процентом выполнения
-            и прогрессом.
+        <div className="why-card soft-shadow">
+          <div className="tape tape-top-center"></div>
+          <div className="why-icon">{featureIcons.habits}</div>
+          <h3 className="why-card-title">Трекер привычек</h3>
+          <p className="why-card-text">
+            Формируйте полезные привычки и отслеживайте их ежедневно.
           </p>
         </div>
 
-        <div className="feature-item soft-shadow">
-          <div className="feature-icon">
-            <img src={chelIcon} alt="Цели" className="icon-image" />
-          </div>
-          <h3>Цели</h3>
-          <p className="feature-text">
-            Формируй новые полезные
-            привычки постепенно.
+        <div className="why-card soft-shadow">
+          <div className="tape tape-top-center"></div>
+          <div className="why-icon">{featureIcons.visual}</div>
+          <h3 className="why-card-title">Визуальный прогресс</h3>
+          <p className="why-card-text">
+            Наглядные графики и статистика помогут видеть ваш рост.
+          </p>
+        </div>
+
+        <div className="why-card soft-shadow">
+          <div className="tape tape-top-center"></div>
+          <div className="why-icon">{featureIcons.motivation}</div>
+          <h3 className="why-card-title">Мотивация и достижения</h3>
+          <p className="why-card-text">
+            Получайте награды и оставайтесь мотивированными каждый день.
           </p>
         </div>
       </div>
+
     </section>
   );
 }

@@ -65,6 +65,12 @@
     transform: translateY(-3px) rotate(-2deg);
 }
 
+.nav-logout {
+    min-width: 120px;
+    padding: 12px 20px;
+    font-size: 20px;
+}
+
 @media (max-width: 900px) {
     .paper-nav {
         flex-direction: column;
