@@ -6,10 +6,6 @@ import About from './components/About/About.jsx';
 import Login from './components/Login/Login.jsx';
 import Profile from './components/Profile/Profile.jsx';
 import './shared/shared.css';
-<<<<<<< HEAD
-
-=======
->>>>>>> client
 
 
 function App() {
@@ -48,8 +44,8 @@ function App() {
   return (
     <Router>
       <div className="app craft-paper-bg">
-        <Navigation 
-          isLoggedIn={isLoggedIn} 
+        <Navigation
+          isLoggedIn={isLoggedIn}
           onLogout={handleLogout}
           nickname={currentUser?.nickname}
         />
@@ -59,15 +55,15 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/about" element={<About />} />
             <Route path="/login" element={<Login onLogin={handleLogin} />} />
-            <Route 
-              path="/profile" 
+            <Route
+              path="/profile"
               element={
-                <Profile 
-                  user={currentUser} 
-                  isLoggedIn={isLoggedIn} 
+                <Profile
+                  user={currentUser}
+                  isLoggedIn={isLoggedIn}
                   onLogout={handleLogout}
                 />
-              } 
+              }
             />
           </Routes>
         </main>
