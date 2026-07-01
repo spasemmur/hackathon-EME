@@ -93,7 +93,7 @@ exports.login = async (req, res) => {
             success: true,
             message: "Вход выполнен!",
             token,
-            user: { id: user.id, username: user.nickname }
+            user: { id: user.id, username: user.nickname, email: user.email }
         });
 
     } catch (error) {

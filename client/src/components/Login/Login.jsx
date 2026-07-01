@@ -8,6 +8,7 @@ function Login({ onLogin }) {
   const [successMessage, setSuccessMessage] = useState('');
   const [showBanner, setShowBanner] = useState(false);
   const [bannerMessage, setBannerMessage] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const [loginInput, setLoginInput] = useState('');
   const [passwordInput, setPasswordInput] = useState('');
@@ -22,14 +23,20 @@ function Login({ onLogin }) {
   const handleLogin = async () => {
     try {
       setError('');
+      setLoading(true);
       const data = await loginUser(loginInput, passwordInput);
 
       if (data.success) {
+        // ✅ запоминаем только логин, не пароль
         if (rememberMe) {
           localStorage.setItem('rememberedLogin', loginInput);
-          localStorage.setItem('rememberedPassword', passwordInput);
         }
-        onLogin({ login: loginInput, nickname: data.user?.nickname || loginInput });
+        // ✅ передаём нормализованные данные
+        onLogin({
+          nickname: data.user?.username || data.user?.nickname || loginInput,
+          email: data.user?.email,
+          id: data.user?.id
+        });
         setSuccessMessage('Вход выполнен успешно!');
         setTimeout(() => setSuccessMessage(''), 3000);
       } else {
@@ -37,6 +44,8 @@ function Login({ onLogin }) {
       }
     } catch (err) {
       setError(err.message);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -44,40 +53,53 @@ function Login({ onLogin }) {
     try {
       setError('');
 
+      // Проверка на пустые поля
       if (!regEmail || !regPassword || !regNickname || !regGender || !regBirthDate) {
         setError('Заполните все поля');
         return;
       }
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
+      // Валидация email
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       if (!emailRegex.test(regEmail)) {
         setError('Введите корректный email (например: user@mail.ru)');
         return;
       }
 
+      // Валидация пароля
       if (regPassword.length < 8) {
         setError('Пароль должен быть минимум 8 символов');
         return;
       }
 
+      // Валидация никнейма
       if (regNickname.length < 3) {
         setError('Никнейм должен быть минимум 3 символа');
         return;
       }
 
+      setLoading(true);
 
       const result = await registerUser({
         email: regEmail,
         password: regPassword,
         nickname: regNickname,
-        sex: regGender,
+        sex: regGender,       // api.js конвертирует 'male'/'female' в 1/2
         birthdate: regBirthDate
       });
 
       if (result.success) {
-        setBannerMessage(`🎉 ${result.message}`);
+        // ✅ автовход после регистрации
+        onLogin({
+          nickname: result.user?.username || result.user?.nickname,
+          email: result.user?.email,
+          id: result.user?.id
+        });
+
+        setBannerMessage(`🎉 ${result.message || 'Регистрация прошла успешно!'}`);
         setShowBanner(true);
 
+        // Очистка формы
         setRegEmail('');
         setRegPassword('');
         setRegNickname('');
@@ -91,6 +113,8 @@ function Login({ onLogin }) {
       }
     } catch (err) {
       setError(err.message);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -122,7 +146,7 @@ function Login({ onLogin }) {
               <input
                 type="text"
                 className="paper-input"
-                placeholder="Введите email или никнейм"
+                placeholder="Email или никнейм"
                 value={loginInput}
                 onChange={(e) => setLoginInput(e.target.value)}
               />
@@ -151,11 +175,19 @@ function Login({ onLogin }) {
               </label>
             </div>
 
-            <button className="paper-btn primary-btn glued-btn" onClick={handleLogin}>
-              Войти
+            <button
+              className="paper-btn primary-btn glued-btn"
+              onClick={handleLogin}
+              disabled={loading}
+            >
+              {loading ? 'Входим...' : 'Войти'}
             </button>
 
-            <button className="paper-btn secondary-btn" onClick={() => setShowRegister(true)}>
+            <button
+              className="paper-btn secondary-btn"
+              onClick={() => { setShowRegister(true); setError(''); }}
+              disabled={loading}
+            >
               Создать аккаунт
             </button>
           </>
@@ -177,7 +209,7 @@ function Login({ onLogin }) {
             </div>
 
             <div className="form-group">
-              <label className="paper-label">Логин (Email):</label>
+              <label className="paper-label">Email:</label>
               <input
                 type="email"
                 className="paper-input"
@@ -192,7 +224,7 @@ function Login({ onLogin }) {
               <input
                 type="password"
                 className="paper-input"
-                placeholder="Придумайте пароль"
+                placeholder="Минимум 8 символов"
                 value={regPassword}
                 onChange={(e) => setRegPassword(e.target.value)}
               />
@@ -221,11 +253,19 @@ function Login({ onLogin }) {
               />
             </div>
 
-            <button className="paper-btn primary-btn glued-btn" onClick={handleRegister}>
-              Зарегистрироваться
+            <button
+              className="paper-btn primary-btn glued-btn"
+              onClick={handleRegister}
+              disabled={loading}
+            >
+              {loading ? 'Регистрируемся...' : 'Зарегистрироваться'}
             </button>
 
-            <button className="paper-btn secondary-btn" onClick={() => setShowRegister(false)}>
+            <button
+              className="paper-btn secondary-btn"
+              onClick={() => { setShowRegister(false); setError(''); }}
+              disabled={loading}
+            >
               Назад ко входу
             </button>
           </>

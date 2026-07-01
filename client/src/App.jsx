@@ -27,9 +27,12 @@ function App() {
     initAuth();
   }, []);
 
-  // ✅ функция входа — вызывается после успешного логина/регистрации
   const handleLogin = (userData) => {
-    setUser(userData);
+    setUser({
+      nickname: userData.nickname || userData.username,
+      email: userData.email || userData.login, // поддерживаем оба варианта
+      id: userData.id
+    });
     setIsAuth(true);
   };
 
