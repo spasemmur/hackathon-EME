@@ -36,12 +36,12 @@ function Profile({ user, isLoggedIn }) {
         <div className="profile-header soft-shadow">
           <div className="profile-avatar">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="80" height="80" fill="#555">
-              <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+              <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
             </svg>
           </div>
           <div className="profile-info">
-            <h3 className="profile-name">{user.nickname || user.login}</h3>
-            <p className="profile-login">Логин: {user.login}</p>
+            <h3 className="profile-name">{user.nickname}</h3>
+            <p className="profile-login">Почта: {user.email}</p>
           </div>
         </div>
 
