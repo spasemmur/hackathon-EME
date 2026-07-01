@@ -1,16 +1,14 @@
 import { Link } from 'react-router-dom';
 import './Home.css';
 
-// Иконки для фич (можно заменить на свои картинки)
+// Иконки для фич
 const featureIcons = {
   tasks: '📋',
   progress: '📊',
   goals: '🎯',
-  achievements: '⭐',
   focus: '🎯',
   habits: '🕐',
-  visual: '📈',
-  motivation: '🏆'
+  visual: '📈'
 };
 
 function Home() {
@@ -34,7 +32,7 @@ function Home() {
           </p>
           
           <Link to="/login" className="paper-btn primary-btn glued-btn hero-btn">
-            Начать бесплатно
+            Начать
           </Link>
         </div>
 
@@ -89,14 +87,6 @@ function Home() {
               <span>Достигайте большего</span>
             </div>
           </div>
-
-          <div className="feature-bubble">
-            <div className="feature-bubble-icon">{featureIcons.achievements}</div>
-            <div className="feature-bubble-text">
-              <strong>Достижения</strong>
-              <span>Получайте награды</span>
-            </div>
-          </div>
         </div>
       </div>
 
@@ -128,15 +118,6 @@ function Home() {
           <h3 className="why-card-title">Визуальный прогресс</h3>
           <p className="why-card-text">
             Наглядные графики и статистика помогут видеть ваш рост.
-          </p>
-        </div>
-
-        <div className="why-card soft-shadow">
-          <div className="tape tape-top-center"></div>
-          <div className="why-icon">{featureIcons.motivation}</div>
-          <h3 className="why-card-title">Мотивация и достижения</h3>
-          <p className="why-card-text">
-            Получайте награды и оставайтесь мотивированными каждый день.
           </p>
         </div>
       </div>

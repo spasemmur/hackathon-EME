@@ -7,6 +7,7 @@ import Login from './components/Login/Login.jsx';
 import Profile from './components/Profile/Profile.jsx';
 import './shared/shared.css';
 
+
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
