@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Navigation from './components/Navigation/Navigation.jsx';
 import Home from './components/Home/Home.jsx';
 import About from './components/About/About.jsx';
 import Login from './components/Login/Login.jsx';
 import Profile from './components/Profile/Profile.jsx';
-import { getProfile } from './api'; // ✅ импорт
+import Dashboard from './components/Dashboard/Dashboard.jsx';
+import { getProfile } from './api';
 import './shared/shared.css';
 
 function App() {
@@ -17,17 +18,14 @@ function App() {
       if (localStorage.getItem('token')) {
         try {
           const data = await getProfile();
-          console.log('📥 Данные от сервера:', data); // ← для отладки
-
-          // ✅ ИЗВЛЕКИ user из ответа
           setUser({
-            nickname: data.user?.nickname,
-            email: data.user?.email,
-            id: data.user?.id
+            nickname: data.user?.nickname || data.nickname,
+            email: data.user?.email || data.email,
+            id: data.user?.id || data.userId
           });
           setIsAuth(true);
         } catch (e) {
-          console.error("❌ Сессия истекла:", e);
+          console.log("Сессия истекла:", e);
           localStorage.removeItem('token');
           setUser(null);
           setIsAuth(false);
@@ -40,13 +38,12 @@ function App() {
   const handleLogin = (userData) => {
     setUser({
       nickname: userData.nickname || userData.username,
-      email: userData.email || userData.login, // поддерживаем оба варианта
+      email: userData.email || userData.login,
       id: userData.id
     });
     setIsAuth(true);
   };
 
-  // ✅ переименовали logout в handleLogout для единообразия
   const handleLogout = () => {
     localStorage.removeItem('token');
     setUser(null);
@@ -60,26 +57,22 @@ function App() {
         <Navigation
           isLoggedIn={isAuth}
           onLogout={handleLogout}
-          user={user}        // ✅ передаём весь объект user вместо nickname
+          user={user}
         />
 
         <main className="main-content">
           <Routes>
-            <Route path="/" element={<Home />} />
+            <Route path="/" element={<Home isAuth={isAuth} user={user} />} />
             <Route path="/about" element={<About />} />
             <Route path="/login" element={
-              <Login onLogin={handleLogin} /> // ✅ теперь существует
+              isAuth ? <Navigate to="/tasks" replace /> : <Login onLogin={handleLogin} />
             } />
-            <Route
-              path="/profile"
-              element={
-                <Profile
-                  user={user}               // ✅ было: currentUser
-                  isLoggedIn={isAuth}       // ✅ было: isLoggedIn
-                  onLogout={handleLogout}   // ✅ теперь существует
-                />
-              }
-            />
+            <Route path="/tasks" element={
+              isAuth ? <Dashboard user={user} /> : <Navigate to="/login" replace />
+            } />
+            <Route path="/profile" element={
+              <Profile user={user} isLoggedIn={isAuth} onLogout={handleLogout} />
+            } />
           </Routes>
         </main>
       </div>

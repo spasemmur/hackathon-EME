@@ -1,204 +1,93 @@
-/* ---------- ВЫПАДАЮЩИЙ ПРОФИЛЬ ---------- */
-.profile-dropdown {
-    position: relative;
-    display: inline-block;
-    font-family: "Special Elite", cursive;
-}
-
-/* Триггер (кнопка с аватаром) */
-.profile-trigger {
+/* ---------- ПРОФИЛЬ ---------- */
+.profile-header {
     display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 6px 14px 6px 6px;
-    background: #fffdf7;
-    border: 1px solid rgba(112, 85, 61, .25);
-    border-radius: 40px;
-    cursor: pointer;
-    font-family: inherit;
-    font-size: 16px;
-    color: #555;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, .08);
-    transition: transform .2s, box-shadow .2s;
-}
-
-.profile-trigger:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 16px rgba(0, 0, 0, .12);
-}
-
-.profile-trigger-avatar {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    background: #faf6e8;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .06);
-}
-
-.profile-trigger-name {
-    font-family: "Special Elite", cursive;
-    color: #5a4632;
-}
-
-.profile-trigger-arrow {
-    transition: transform .25s ease;
-}
-
-.profile-trigger-arrow.is-rotated {
-    transform: rotate(180deg);
-}
-
-/* Панель */
-.profile-panel {
-    position: absolute;
-    top: calc(100% + 12px);
-    right: 0;
-    width: 420px;
-    max-width: 90vw;
-    opacity: 0;
-    visibility: hidden;
-    transform: translateY(-10px) scale(.98);
-    transform-origin: top right;
-    transition: opacity .25s ease, transform .25s ease, visibility .25s;
-    z-index: 1000;
-    pointer-events: none;
-}
-
-.profile-panel.is-visible {
-    opacity: 1;
-    visibility: visible;
-    transform: translateY(0) scale(1);
-    pointer-events: auto;
-}
-
-/* Карточка внутри панели */
-.profile-panel .paper-card {
-    padding: 28px 24px 22px;
-    background: #fffdf7;
-    border-radius: 18px;
-    box-shadow: 0 20px 40px rgba(0, 0, 0, .18);
-    position: relative;
-}
-
-/* Шапка профиля внутри дропдауна — компактнее */
-.profile-panel .profile-header {
-    display: flex;
-    gap: 18px;
+    gap: 30px;
     align-items: center;
     background: #faf6e8;
-    padding: 18px;
-    border-radius: 14px;
-    transform: rotate(-1deg);
-    box-shadow: 0 10px 20px rgba(0, 0, 0, .08);
-    margin-bottom: 20px;
+    padding: 30px;
+    border-radius: 16px;
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+    margin-bottom: 35px;
+    border: 1px solid rgba(112, 85, 61, 0.1);
 }
 
-.profile-panel .profile-avatar {
-    width: 70px;
-    height: 70px;
+.profile-avatar {
+    width: 110px;
+    height: 110px;
     border-radius: 50%;
     background: white;
     display: flex;
     justify-content: center;
     align-items: center;
-    box-shadow: 0 6px 14px rgba(0, 0, 0, .1);
-    flex-shrink: 0;
+    font-size: 40px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
 }
 
-.profile-panel .profile-avatar svg {
-    width: 48px;
-    height: 48px;
-}
-
-.profile-panel .profile-name {
-    font-size: 22px;
+.profile-name {
+    font-size: 34px;
     font-family: "Special Elite", cursive;
-    margin: 0 0 4px;
+    margin-bottom: 8px;
     color: #5a4632;
 }
 
-.profile-panel .profile-login {
-    font-size: 14px;
+.profile-login {
+    font-size: 18px;
     color: #756452;
     margin: 0;
-    word-break: break-all;
 }
 
 /* Статистика */
-.profile-panel .profile-stats {
+.profile-stats {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 10px;
-    margin-bottom: 18px;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 22px;
 }
 
-.profile-panel .stat-item {
+.stat-item {
     background: #fffdf7;
-    padding: 14px 8px;
-    border-radius: 12px;
+    padding: 30px 25px;
+    border-radius: 16px;
     text-align: center;
-    box-shadow: 0 6px 14px rgba(0, 0, 0, .08);
-    transition: transform .25s;
-    border: 1px dashed rgba(112, 85, 61, .2);
+    box-shadow: 0 10px 22px rgba(0, 0, 0, 0.08);
+    transition: transform 0.25s, box-shadow 0.25s;
+    border: 1px solid rgba(112, 85, 61, 0.08);
+    position: relative;
+    overflow: hidden;
 }
 
-.profile-panel .stat-item:nth-child(1) {
-    transform: rotate(-2deg);
+/* ✅ Убираем кривые повороты — делаем ровные карточки */
+.stat-item:nth-child(1),
+.stat-item:nth-child(2),
+.stat-item:nth-child(3) {
+    transform: none;
 }
 
-.profile-panel .stat-item:nth-child(2) {
-    transform: rotate(2deg);
+.stat-item:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 16px 32px rgba(0, 0, 0, 0.12);
 }
 
-.profile-panel .stat-item:nth-child(3) {
-    transform: rotate(-1deg);
-}
-
-.profile-panel .stat-item:hover {
-    transform: translateY(-4px) rotate(0deg);
-}
-
-.profile-panel .stat-number {
-    font-size: 26px;
+.stat-number {
+    font-size: 46px;
     font-family: "Special Elite", cursive;
     color: #70553d;
+    margin-bottom: 4px;
 }
 
-.profile-panel .stat-label {
-    margin-top: 4px;
-    font-size: 13px;
+.stat-label {
+    font-size: 18px;
     color: #756452;
+    font-family: "Special Elite", cursive;
+    letter-spacing: 0.5px;
 }
 
-/* Кнопка "Открыть полный профиль" */
-.profile-open-full {
-    display: block;
-    width: 100%;
-    text-align: center;
-    text-decoration: none;
-    margin-top: 4px;
-}
-
-/* Адаптив */
-@media (max-width: 520px) {
-    .profile-panel {
-        width: 92vw;
-        right: -10px;
-    }
-
-    .profile-panel .profile-stats {
-        grid-template-columns: 1fr;
-    }
-
-    .profile-panel .profile-header {
+@media (max-width: 900px) {
+    .profile-header {
         flex-direction: column;
         text-align: center;
     }
 
-    .profile-trigger-name {
-        display: none;
+    .profile-stats {
+        grid-template-columns: 1fr;
     }
 }

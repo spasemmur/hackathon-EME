@@ -1,7 +1,6 @@
-import { Link } from 'react-router-dom';
+import { Link, Navigate } from 'react-router-dom';
 import './Home.css';
 
-// Иконки для фич
 const featureIcons = {
   tasks: '📋',
   progress: '📊',
@@ -11,32 +10,36 @@ const featureIcons = {
   visual: '📈'
 };
 
-function Home() {
+function Home({ isAuth, user }) {
+  // ✅ Если пользователь вошел — перенаправляем на задачи
+  if (isAuth) {
+    return <Navigate to="/tasks" replace />;
+  }
+
   return (
     <section className="paper-page home-page">
-      
       {/* ===== HERO СЕКЦИЯ ===== */}
       <div className="hero-section">
-        
         <div className="hero-paper">
           <div className="tape tape-top-left"></div>
-          
+
           <h1 className="hero-title">
             Ваш путь<br />
             к продуктивности
           </h1>
-          
+
           <p className="hero-description">
-            Поток — это трекер задач и привычек, который помогает вам 
+            Поток — это трекер задач и привычек, который помогает вам
             фокусироваться на важном, отслеживать прогресс и достигать целей.
           </p>
-          
+
+          {/* ✅ Кнопка "Начать" только для неавторизованных */}
           <Link to="/login" className="paper-btn primary-btn glued-btn hero-btn">
             Начать
           </Link>
         </div>
 
-        {/* Декоративная сцена справа */}
+        {/* Декоративная сцена */}
         <div className="hero-scene">
           <div className="scene-sky">
             <div className="scene-sun"></div>
@@ -56,11 +59,12 @@ function Home() {
           </div>
         </div>
       </div>
+
       <div className="features-paper">
         <div className="tape tape-top-right"></div>
-        
+
         <p className="features-intro">После входа вам станут доступны:</p>
-        
+
         <div className="features-row">
           <div className="feature-bubble">
             <div className="feature-bubble-icon">{featureIcons.tasks}</div>
@@ -87,6 +91,7 @@ function Home() {
           </div>
         </div>
       </div>
+
       <h2 className="section-title why-title">Почему Поток?</h2>
 
       <div className="why-grid">
@@ -117,7 +122,6 @@ function Home() {
           </p>
         </div>
       </div>
-
     </section>
   );
 }
