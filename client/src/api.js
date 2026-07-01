@@ -79,9 +79,13 @@ export const loginUser = async (email, password) => {
   const data = await response.json();
 
   if (response.ok && data.token) {
-    // СОХРАНЯЕМ ТОКЕН
     localStorage.setItem('token', data.token);
   }
+
+  if (!response.ok) {
+    throw new Error(data.message || 'Ошибка входа');
+  }
+
   return data;
 };
 

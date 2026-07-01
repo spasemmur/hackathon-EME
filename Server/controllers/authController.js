@@ -20,14 +20,13 @@ exports.register = async (req, res) => {
         if (candidate) {
             return res.status(400).json({ message: "Этот email уже занят" });
         }
-
         const user = await User.create(validatedData);
 
         // --- ДОБАВЛЯЕМ ГЕНЕРАЦИЮ ТОКЕНА ---
         const token = jwt.sign(
             { id: user.id, email: user.email },
             process.env.JWT_SECRET,
-            { expiresIn: '15min' }
+            { expiresIn: '6h' }
         );
 
         res.status(201).json({
@@ -42,11 +41,27 @@ exports.register = async (req, res) => {
         });
 
     } catch (error) {
-        if (error instanceof z.ZodError) {
-            return res.status(400).json({ errors: error.errors });
+        // 1. Проверяем, что это ошибка именно от Zod
+        if (error.name === 'ZodError' || error.errors) {
+            return res.status(400).json({
+                success: false,
+                message: "Ошибка валидации данных",
+                // Добавили ?. перед map - если ошибок нет, код не упадет
+                errors: error.errors?.map(err => ({
+                    field: err.path.join('.'),
+                    message: err.message
+                })) || []
+            });
         }
-        console.error(error);
-        res.status(500).json({ message: "Ошибка сервера при регистрации" });
+
+        // 2. Если это НЕ Zod (например, база данных или опечатка)
+        console.error("Критическая ошибка бэкенда:", error);
+        res.status(500).json({
+            success: false,
+            message: "Внутренняя ошибка сервера",
+            // Для отладки в Postman выводим текст ошибки
+            details: error.message
+        });
     }
 };
 
