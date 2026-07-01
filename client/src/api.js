@@ -108,3 +108,179 @@ export const getProtectedData = async (endpoint) => {
 
   return await response.json();
 };
+
+// ==================== ЗАДАЧИ ====================
+
+// Получить все задачи (с фильтрами)
+export const getTasks = async (filters = {}) => {
+  const token = getToken();
+  const queryParams = new URLSearchParams(filters).toString();
+  const url = `${API_URL}/api/tasks${queryParams ? '?' + queryParams : ''}`;
+
+  const response = await fetch(url, {
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    }
+  });
+
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.message);
+  return data.tasks;
+};
+
+// Создать задачу
+export const createTask = async (taskData) => {
+  const token = getToken();
+
+  const response = await fetch(`${API_URL}/api/tasks`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    },
+    body: JSON.stringify(taskData)
+  });
+
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.message);
+  return data.task;
+};
+
+// Обновить задачу
+export const updateTask = async (id, taskData) => {
+  const token = getToken();
+
+  const response = await fetch(`${API_URL}/api/tasks/${id}`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    },
+    body: JSON.stringify(taskData)
+  });
+
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.message);
+  return data.task;
+};
+
+// Переключить статус задачи (выполнена/не выполнена)
+export const toggleTask = async (id) => {
+  const token = getToken();
+
+  const response = await fetch(`${API_URL}/api/tasks/${id}/toggle`, {
+    method: 'PATCH',
+    headers: {
+      'Authorization': `Bearer ${token}`
+    }
+  });
+
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.message);
+  return data.task;
+};
+
+// Удалить задачу
+export const deleteTask = async (id) => {
+  const token = getToken();
+
+  const response = await fetch(`${API_URL}/api/tasks/${id}`, {
+    method: 'DELETE',
+    headers: {
+      'Authorization': `Bearer ${token}`
+    }
+  });
+
+  if (!response.ok) {
+    const data = await response.json();
+    throw new Error(data.message);
+  }
+  return true;
+};
+
+// Получить статистику по задачам
+export const getTaskStats = async () => {
+  const token = getToken();
+
+  const response = await fetch(`${API_URL}/api/tasks/stats`, {
+    headers: {
+      'Authorization': `Bearer ${token}`
+    }
+  });
+
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.message);
+  return data.stats;
+};
+
+// ==================== ЦЕЛИ ====================
+
+// Получить все цели
+export const getGoals = async () => {
+  const token = getToken();
+
+  const response = await fetch(`${API_URL}/api/goals`, {
+    headers: {
+      'Authorization': `Bearer ${token}`
+    }
+  });
+
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.message);
+  return data.goals;
+};
+
+// Создать цель
+export const createGoal = async (goalData) => {
+  const token = getToken();
+
+  const response = await fetch(`${API_URL}/api/goals`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    },
+    body: JSON.stringify(goalData)
+  });
+
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.message);
+  return data.goal;
+};
+
+// Обновить прогресс цели
+export const updateGoalProgress = async (id, currentValue) => {
+  const token = getToken();
+
+  const response = await fetch(`${API_URL}/api/goals/${id}/progress`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    },
+    body: JSON.stringify({ current_value: currentValue })
+  });
+
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.message);
+  return data.goal;
+};
+
+// Удалить цель
+export const deleteGoal = async (id) => {
+  const token = getToken();
+
+  const response = await fetch(`${API_URL}/api/goals/${id}`, {
+    method: 'DELETE',
+    headers: {
+      'Authorization': `Bearer ${token}`
+    }
+  });
+
+  if (!response.ok) {
+    const data = await response.json();
+    throw new Error(data.message);
+  }
+  return true;
+};
