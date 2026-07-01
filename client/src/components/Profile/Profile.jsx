@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import './Profile.css';
 
 function Profile({ user, isLoggedIn }) {
   if (!isLoggedIn || !user) {
@@ -7,7 +8,7 @@ function Profile({ user, isLoggedIn }) {
         <div className="paper-card torn-edge">
           <div className="tape tape-top-center"></div>
           <div className="paper-crease"></div>
-          
+
           <div className="empty-state">
             <div className="empty-icon">👤</div>
             <h2 className="paper-title">Профиль</h2>
@@ -29,9 +30,9 @@ function Profile({ user, isLoggedIn }) {
         <div className="tape tape-top-left"></div>
         <div className="tape tape-top-right"></div>
         <div className="paper-crease"></div>
-        
+
         <h2 className="paper-title">Мой профиль</h2>
-        
+
         <div className="profile-header soft-shadow">
           <div className="profile-avatar">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="80" height="80" fill="#555">
@@ -43,7 +44,7 @@ function Profile({ user, isLoggedIn }) {
             <p className="profile-login">Логин: {user.login}</p>
           </div>
         </div>
-        
+
         <div className="profile-stats">
           <div className="stat-item soft-shadow">
             <div className="stat-number">0</div>

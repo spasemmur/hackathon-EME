@@ -1,0 +1,259 @@
+/* ================= HERO ================= */
+
+.hero-section {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 70px;
+    align-items: center;
+    margin: 40px 0 70px;
+}
+
+.hero-left {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.hero-title {
+    font-size: 68px;
+    line-height: 1.05;
+    margin: 20px 0;
+    text-align: left;
+}
+
+.hero-text {
+    text-align: left;
+    max-width: 520px;
+    font-size: 24px;
+    margin-bottom: 30px;
+    margin-left: 0;
+    margin-right: 0;
+}
+
+.hero-right {
+    display: flex;
+    justify-content: center;
+}
+
+/* ================= PAPER SCENE ================= */
+
+.paper-scene {
+    width: 520px;
+    height: 520px;
+    background: #f8f3e7;
+    border-radius: 26px;
+    position: relative;
+    overflow: hidden;
+    box-shadow:
+        0 25px 45px rgba(0, 0, 0, .15),
+        inset 0 2px 5px rgba(255, 255, 255, .5);
+    transform: rotate(2deg);
+}
+
+.scene-sun {
+    position: absolute;
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    background: #ffd96c;
+    top: 45px;
+    right: 60px;
+    box-shadow: 0 0 40px rgba(255, 217, 108, .6);
+}
+
+.scene-cloud {
+    position: absolute;
+    width: 90px;
+    height: 34px;
+    background: white;
+    border-radius: 30px;
+}
+
+.scene-cloud::before {
+    content: "";
+    position: absolute;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: white;
+    left: 10px;
+    top: -15px;
+}
+
+.scene-cloud::after {
+    content: "";
+    position: absolute;
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    background: white;
+    right: 12px;
+    top: -18px;
+}
+
+.cloud-1 { top: 80px; left: 70px; }
+.cloud-2 { top: 140px; right: 110px; }
+
+.mountain {
+    position: absolute;
+    bottom: 130px;
+    width: 0;
+    height: 0;
+    border-left: 120px solid transparent;
+    border-right: 120px solid transparent;
+    border-bottom: 220px solid #b7c8ad;
+}
+
+.mountain-1 { left: -30px; }
+.mountain-2 {
+    left: 150px;
+    border-bottom-color: #9db48e;
+}
+.mountain-3 { right: -40px; }
+
+.paper-scene::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 140px;
+    background: #87b57d;
+}
+
+.tree {
+    position: absolute;
+    bottom: 120px;
+    width: 26px;
+    height: 90px;
+    background: #6b4f36;
+}
+
+.tree::before {
+    content: "";
+    position: absolute;
+    width: 70px;
+    height: 70px;
+    background: #4e8f53;
+    border-radius: 50%;
+    left: -22px;
+    top: -45px;
+}
+
+.tree-1 { left: 90px; }
+.tree-2 { left: 200px; }
+.tree-3 { right: 90px; }
+
+.house {
+    position: absolute;
+    width: 90px;
+    height: 70px;
+    background: #f7efe4;
+    bottom: 120px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.house::before {
+    content: "";
+    position: absolute;
+    left: -12px;
+    top: -45px;
+    border-left: 57px solid transparent;
+    border-right: 57px solid transparent;
+    border-bottom: 45px solid #9a6042;
+}
+
+.house::after {
+    content: "";
+    position: absolute;
+    width: 20px;
+    height: 35px;
+    background: #8b5b3d;
+    bottom: 0;
+    left: 35px;
+}
+
+/* ---------- FEATURES ---------- */
+
+.paper-features {
+    margin-top: 60px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 30px;
+}
+
+.feature-item {
+    background: #fffdf7;
+    padding: 30px;
+    border-radius: 14px;
+    transform: rotate(calc(var(--r, 0) * 1deg));
+    transition: .3s;
+    box-shadow: 0 12px 20px rgba(0, 0, 0, .1);
+}
+
+.feature-item:nth-child(1) { --r: -2; }
+.feature-item:nth-child(2) { --r: 2; }
+.feature-item:nth-child(3) { --r: -1; }
+
+.feature-item:hover {
+    transform: translateY(-8px) rotate(0deg);
+}
+
+.feature-item h3 {
+    font-family: "Special Elite", cursive;
+    font-size: 26px;
+    margin-bottom: 10px;
+    color: #4b3827;
+}
+
+.feature-icon {
+    font-size: 46px;
+    margin-bottom: 15px;
+}
+
+.feature-text {
+    font-size: 22px;
+    line-height: 1.5;
+}
+
+.icon-image {
+    width: var(--icon-size, 80px);
+    height: var(--icon-size, 80px);
+    object-fit: contain;
+    display: block;
+    margin: 0 auto;
+}
+
+/* ---------- АДАПТИВ ---------- */
+
+@media (max-width: 950px) {
+    .hero-section {
+        grid-template-columns: 1fr;
+    }
+
+    .hero-left {
+        align-items: center;
+    }
+
+    .hero-title,
+    .hero-text {
+        text-align: center;
+    }
+
+    .paper-scene {
+        width: 100%;
+        max-width: 420px;
+        height: 420px;
+    }
+}
+
+@media (max-width: 900px) {
+    .paper-features {
+        grid-template-columns: 1fr;
+    }
+
+    .feature-text {
+        font-size: 18px;
+    }
+}
