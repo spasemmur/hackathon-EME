@@ -67,17 +67,22 @@ exports.register = async (req, res) => {
 
 exports.login = async (req, res) => {
     try {
-        const { email, password } = req.body;
-        const user = await User.findOne({ where: { email } });
+        const { login, password } = req.body; // login = email ИЛИ nickname
+
+        // определяем по наличию @ — это email или никнейм
+        const isEmail = login.includes('@');
+
+        const user = await User.findOne({
+            where: isEmail ? { email: login } : { nickname: login }
+        });
 
         if (!user || !(await bcrypt.compare(password, user.password))) {
-            return res.status(401).json({ message: "Неверные данные для входа" });
+            return res.status(401).json({
+                success: false,
+                message: "Неверный логин или пароль"
+            });
         }
 
-        // СОЗДАЕМ ТОКЕН
-        // 1 параметр: данные, которые «зашиваем» в токен (id и email)
-        // 2 параметр: секретный ключ из .env
-        // 3 параметр: срок жизни токена (например, 24 часа)
         const token = jwt.sign(
             { id: user.id, email: user.email },
             process.env.JWT_SECRET,
@@ -87,11 +92,11 @@ exports.login = async (req, res) => {
         res.json({
             success: true,
             message: "Вход выполнен!",
-            token, // Отправляем токен клиенту
+            token,
             user: { id: user.id, username: user.nickname }
         });
 
     } catch (error) {
-        res.status(500).json({ message: "Ошибка сервера" });
+        res.status(500).json({ success: false, message: "Ошибка сервера" });
     }
 };

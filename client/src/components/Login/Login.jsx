@@ -48,6 +48,12 @@ function Login({ onLogin }) {
         setError('Заполните все поля');
         return;
       }
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+      if (!emailRegex.test(regEmail)) {
+        setError('Введите корректный email (например: user@mail.ru)');
+        return;
+      }
 
       if (regPassword.length < 8) {
         setError('Пароль должен быть минимум 8 символов');
@@ -58,6 +64,7 @@ function Login({ onLogin }) {
         setError('Никнейм должен быть минимум 3 символа');
         return;
       }
+
 
       const result = await registerUser({
         email: regEmail,
@@ -115,7 +122,7 @@ function Login({ onLogin }) {
               <input
                 type="text"
                 className="paper-input"
-                placeholder="Введите логин"
+                placeholder="Введите email или никнейм"
                 value={loginInput}
                 onChange={(e) => setLoginInput(e.target.value)}
               />

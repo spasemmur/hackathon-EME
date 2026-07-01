@@ -68,12 +68,11 @@ export const registerUser = async (userData) => {
 // 1. Помощник для получения токена из памяти
 const getToken = () => localStorage.getItem('token');
 
-// 2. Функция входа (обновленная)
-export const loginUser = async (email, password) => {
+export const loginUser = async (login, password) => {
   const response = await fetch(`${API_URL}/api/auth/login`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email, password }),
+    body: JSON.stringify({ login, password }), // ✅ было: { email, password }
   });
 
   const data = await response.json();
