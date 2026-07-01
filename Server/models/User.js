@@ -19,21 +19,26 @@ const User = sequelize.define('User', {
         validate: { isEmail: true }
     },
     password: {
-        type: DataTypes.STRING(255), // Bcrypt создаст длинную строку, поэтому 255
+        type: DataTypes.STRING(255),
         allowNull: false,
     },
     sex: {
         type: DataTypes.TINYINT(1),
-        defaultValue: 0, // 0 - не указан, 1 - муж, 2 - жен
+        defaultValue: 0,
     },
     birthdate: {
-        type: DataTypes.DATEONLY, // Формат YYYY-MM-DD
+        type: DataTypes.DATEONLY,
+    },
+    // ✅ Добавляем поле date_created
+    date_created: {
+        type: DataTypes.DATE,
+        field: 'date_created', // Точное имя колонки в БД
+        defaultValue: DataTypes.NOW
     }
 }, {
-    tableName: 'users', // Точное имя таблицы в MySQL
-    timestamps: false,  // Если в таблице нет колонок createdAt и updatedAt
+    tableName: 'users',
+    timestamps: false,
     hooks: {
-        // Хешируем пароль перед сохранением (как pre-save в Mongoose)
         beforeCreate: async (user) => {
             const salt = await bcrypt.genSalt(10);
             user.password = await bcrypt.hash(user.password, salt);

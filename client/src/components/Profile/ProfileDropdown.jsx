@@ -90,11 +90,22 @@ function ProfileDropdown({ user, isLoggedIn, onLogout }) {
                     </div>
 
                     <div className="pd-actions">
-                        <Link to="/profile" className="paper-btn primary-btn glued-btn pd-full-btn">
+                        <Link
+                            to="/profile"
+                            className="paper-btn primary-btn glued-btn pd-full-btn"
+                            onClick={() => setIsOpen(false)}
+                        >
                             Открыть полный профиль →
                         </Link>
                         {onLogout && (
-                            <button type="button" className="paper-btn glued-btn pd-logout-btn" onClick={onLogout}>
+                            <button
+                                type="button"
+                                className="paper-btn glued-btn pd-logout-btn"
+                                onClick={() => {
+                                    setIsOpen(false);
+                                    onLogout();
+                                }}
+                            >
                                 Выйти
                             </button>
                         )}

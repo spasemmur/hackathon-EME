@@ -23,6 +23,19 @@ function Profile({ user, isLoggedIn }) {
     );
   }
 
+  // ✅ Форматируем дату создания аккаунта
+  const formatDate = (dateString) => {
+    if (!dateString) return 'Неизвестно';
+    const date = new Date(dateString);
+    return date.toLocaleDateString('ru-RU', {
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  };
+
   return (
     <div className="paper-page profile-page">
       <div className="paper-card profile-card torn-edge">
@@ -40,24 +53,16 @@ function Profile({ user, isLoggedIn }) {
           </div>
           <div className="profile-info">
             <h3 className="profile-name">{user.nickname}</h3>
-            <p className="profile-login">Почта: {user.email}</p>
+            <p className="profile-email">📧 {user.email}</p>
+            {user.createdAt && (
+              <p className="profile-created">
+                📅 Участник с {formatDate(user.createdAt)}
+              </p>
+            )}
           </div>
         </div>
 
-        <div className="profile-stats">
-          <div className="stat-item soft-shadow">
-            <div className="stat-number">0</div>
-            <div className="stat-label">Привычек</div>
-          </div>
-          <div className="stat-item soft-shadow">
-            <div className="stat-number">0</div>
-            <div className="stat-label">Дней подряд</div>
-          </div>
-          <div className="stat-item soft-shadow">
-            <div className="stat-number">0%</div>
-            <div className="stat-label">Успешность</div>
-          </div>
-        </div>
+        {/* Убрали статистику */}
       </div>
     </div>
   );

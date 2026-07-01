@@ -4,11 +4,11 @@
     gap: 30px;
     align-items: center;
     background: #faf6e8;
-    padding: 30px;
+    padding: 35px;
     border-radius: 16px;
     box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
-    margin-bottom: 35px;
-    border: 1px solid rgba(112, 85, 61, 0.1);
+    margin-bottom: 0;
+    border: 2px dashed rgba(112, 85, 61, 0.15);
 }
 
 .profile-avatar {
@@ -21,73 +21,50 @@
     align-items: center;
     font-size: 40px;
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+    flex-shrink: 0;
+}
+
+.profile-info {
+    flex: 1;
 }
 
 .profile-name {
     font-size: 34px;
     font-family: "Special Elite", cursive;
-    margin-bottom: 8px;
+    margin: 0 0 10px;
     color: #5a4632;
 }
 
-.profile-login {
+.profile-email {
     font-size: 18px;
     color: #756452;
+    margin: 0 0 8px;
+    word-break: break-all;
+}
+
+.profile-created {
+    font-size: 16px;
+    color: #8b7355;
     margin: 0;
+    font-style: italic;
 }
 
-/* Статистика */
-.profile-stats {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-    gap: 22px;
-}
-
-.stat-item {
-    background: #fffdf7;
-    padding: 30px 25px;
-    border-radius: 16px;
-    text-align: center;
-    box-shadow: 0 10px 22px rgba(0, 0, 0, 0.08);
-    transition: transform 0.25s, box-shadow 0.25s;
-    border: 1px solid rgba(112, 85, 61, 0.08);
-    position: relative;
-    overflow: hidden;
-}
-
-/* ✅ Убираем кривые повороты — делаем ровные карточки */
-.stat-item:nth-child(1),
-.stat-item:nth-child(2),
-.stat-item:nth-child(3) {
-    transform: none;
-}
-
-.stat-item:hover {
-    transform: translateY(-6px);
-    box-shadow: 0 16px 32px rgba(0, 0, 0, 0.12);
-}
-
-.stat-number {
-    font-size: 46px;
-    font-family: "Special Elite", cursive;
-    color: #70553d;
-    margin-bottom: 4px;
-}
-
+/* Убираем старые стили статистики */
+.profile-stats,
+.stat-item,
+.stat-number,
 .stat-label {
-    font-size: 18px;
-    color: #756452;
-    font-family: "Special Elite", cursive;
-    letter-spacing: 0.5px;
+    display: none;
 }
 
 @media (max-width: 900px) {
     .profile-header {
         flex-direction: column;
         text-align: center;
+        padding: 25px;
     }
 
-    .profile-stats {
-        grid-template-columns: 1fr;
+    .profile-email {
+        word-break: break-word;
     }
 }

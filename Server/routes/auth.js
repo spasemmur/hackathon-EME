@@ -12,9 +12,8 @@ router.post('/login', authController.login);
 // ✅ ИСПРАВЛЕННЫЙ РОУТ /me
 router.get('/me', authMiddleware, async (req, res) => {
     try {
-        // Благодаря мидлвейру, мы уже на 100% знаем, что юзер залогинен
         const user = await User.findByPk(req.user.id, {
-            attributes: ['id', 'nickname', 'email']
+            attributes: ['id', 'nickname', 'email', 'date_created']  // ✅ Добавляем date_created
         });
 
         if (!user) {
@@ -26,7 +25,8 @@ router.get('/me', authMiddleware, async (req, res) => {
             user: {
                 id: user.id,
                 nickname: user.nickname,
-                email: user.email
+                email: user.email,
+                createdAt: user.date_created  // ✅ Возвращаем как createdAt для удобства
             }
         });
     } catch (error) {

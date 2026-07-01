@@ -18,14 +18,18 @@ function App() {
       if (localStorage.getItem('token')) {
         try {
           const data = await getProfile();
+          console.log('📥 Ответ сервера:', data); // для отладки
+
+          // ✅ Нормализуем данные
           setUser({
             nickname: data.user?.nickname || data.nickname,
             email: data.user?.email || data.email,
-            id: data.user?.id || data.userId
+            id: data.user?.id || data.userId,
+            createdAt: data.user?.createdAt || data.createdAt
           });
           setIsAuth(true);
         } catch (e) {
-          console.log("Сессия истекла:", e);
+          console.error("❌ Сессия истекла:", e);
           localStorage.removeItem('token');
           setUser(null);
           setIsAuth(false);
