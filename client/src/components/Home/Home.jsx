@@ -56,8 +56,6 @@ function Home() {
           </div>
         </div>
       </div>
-
-      {/* ===== БУМАЖКА С ФИЧАМИ ПОСЛЕ ВХОДА ===== */}
       <div className="features-paper">
         <div className="tape tape-top-right"></div>
         
@@ -89,8 +87,6 @@ function Home() {
           </div>
         </div>
       </div>
-
-      {/* ===== СЕКЦИЯ "ПОЧЕМУ ПОТОК?" ===== */}
       <h2 className="section-title why-title">Почему Поток?</h2>
 
       <div className="why-grid">
