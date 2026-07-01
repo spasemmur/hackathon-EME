@@ -17,7 +17,7 @@ function App() {
     const savedPassword = localStorage.getItem('rememberedPassword');
     if (savedLogin && savedPassword) {
       setIsLoggedIn(true);
-      setCurrentUser({ login: savedLogin, nickname: savedLogin });
+      setCurrentUser({ email: savedLogin, nickname: savedLogin });
     }
   }, []);
 
@@ -36,8 +36,8 @@ function App() {
   return (
     <Router>
       <div className="app craft-paper-bg">
-        <Navigation 
-          isLoggedIn={isLoggedIn} 
+        <Navigation
+          isLoggedIn={isLoggedIn}
           onLogout={handleLogout}
           nickname={currentUser?.nickname}
         />
@@ -47,15 +47,15 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/about" element={<About />} />
             <Route path="/login" element={<Login onLogin={handleLogin} />} />
-            <Route 
-              path="/profile" 
+            <Route
+              path="/profile"
               element={
-                <Profile 
-                  user={currentUser} 
-                  isLoggedIn={isLoggedIn} 
+                <Profile
+                  user={currentUser}
+                  isLoggedIn={isLoggedIn}
                   onLogout={handleLogout}
                 />
-              } 
+              }
             />
           </Routes>
         </main>
