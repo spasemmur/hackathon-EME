@@ -9,29 +9,21 @@ import './shared/shared.css';
 
 
 function App() {
-  const [user, setUser] = useState(null);
-  const [isAuth, setIsAuth] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [currentUser, setCurrentUser] = useState(null);
 
   useEffect(() => {
-    const initAuth = async () => {
-      if (localStorage.getItem('token')) {
-        try {
-          const data = await getProfile();
-          setUser(data);
-          setIsAuth(true);
-        } catch (e) {
-          console.log("Сессия истекла");
-        }
-      }
-    };
-    initAuth();
+    const savedLogin = localStorage.getItem('rememberedLogin');
+    const savedPassword = localStorage.getItem('rememberedPassword');
+    if (savedLogin && savedPassword) {
+      setIsLoggedIn(true);
+      setCurrentUser({ login: savedLogin, nickname: savedLogin });
+    }
   }, []);
 
-  const logout = () => {
-    localStorage.removeItem('token');
-    setUser(null);
-    setIsAuth(false);
-    window.location.href = '/'; // Редирект на главную
+  const handleLogin = (userData) => {
+    setIsLoggedIn(true);
+    setCurrentUser(userData);
   };
 
   const handleLogout = () => {
@@ -44,8 +36,8 @@ function App() {
   return (
     <Router>
       <div className="app craft-paper-bg">
-        <Navigation
-          isLoggedIn={isLoggedIn}
+        <Navigation 
+          isLoggedIn={isLoggedIn} 
           onLogout={handleLogout}
           nickname={currentUser?.nickname}
         />
@@ -55,15 +47,15 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/about" element={<About />} />
             <Route path="/login" element={<Login onLogin={handleLogin} />} />
-            <Route
-              path="/profile"
+            <Route 
+              path="/profile" 
               element={
-                <Profile
-                  user={currentUser}
-                  isLoggedIn={isLoggedIn}
+                <Profile 
+                  user={currentUser} 
+                  isLoggedIn={isLoggedIn} 
                   onLogout={handleLogout}
                 />
-              }
+              } 
             />
           </Routes>
         </main>
