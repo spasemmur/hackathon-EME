@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-<<<<<<< HEAD
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import About from './About.jsx';
 import Profile from './Profile.jsx';
@@ -381,16 +380,6 @@ function Login({ onLogin }) {
     </div>
   );
 }
-=======
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Navigation from './components/Navigation/Navigation.jsx';
-import Home from './components/Home/Home.jsx';
-import About from './components/About/About.jsx';
-import Login from './components/Login/Login.jsx';
-import Profile from './components/Profile/Profile.jsx';
-import Statistics from './components/Statistics/Statistics.jsx';
-import './shared/shared.css';
->>>>>>> client
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
