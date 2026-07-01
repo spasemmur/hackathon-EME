@@ -4,7 +4,6 @@ import './Navigation.css';
 function Navigation({ isLoggedIn, onLogout, nickname }) {
   return (
     <nav className="paper-nav">
-      {/* Логотип — всегда виден, но кликабельный только если не на главной */}
       <Link to="/" className="nav-logo-link">
         <div className="nav-logo">
           <div className="logo-tape"></div>
