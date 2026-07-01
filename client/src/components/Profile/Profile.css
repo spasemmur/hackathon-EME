@@ -1,0 +1,81 @@
+/* ---------- ПРОФИЛЬ ---------- */
+
+.profile-header {
+    display: flex;
+    gap: 30px;
+    align-items: center;
+    background: #faf6e8;
+    padding: 30px;
+    border-radius: 16px;
+    transform: rotate(-1deg);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, .1);
+    margin-bottom: 35px;
+}
+
+.profile-avatar {
+    width: 110px;
+    height: 110px;
+    border-radius: 50%;
+    background: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 40px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, .12);
+}
+
+.profile-name {
+    font-size: 34px;
+    font-family: "Special Elite", cursive;
+    margin-bottom: 8px;
+}
+
+.profile-login {
+    font-size: 18px;
+    color: #756452;
+}
+
+.profile-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 22px;
+}
+
+.stat-item {
+    background: #fffdf7;
+    padding: 25px;
+    border-radius: 16px;
+    text-align: center;
+    box-shadow: 0 10px 22px rgba(0, 0, 0, .08);
+    transition: .25s;
+}
+
+.stat-item:nth-child(1) { transform: rotate(-2deg); }
+.stat-item:nth-child(2) { transform: rotate(2deg); }
+.stat-item:nth-child(3) { transform: rotate(-1deg); }
+
+.stat-item:hover {
+    transform: translateY(-6px) rotate(0deg);
+}
+
+.stat-number {
+    font-size: 46px;
+    font-family: "Special Elite", cursive;
+    color: #70553d;
+}
+
+.stat-label {
+    margin-top: 10px;
+    font-size: 18px;
+}
+
+@media (max-width: 900px) {
+    .profile-header {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .profile-stats {
+        grid-template-columns: 1fr;
+    }
+}

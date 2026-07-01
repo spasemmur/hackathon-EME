@@ -1,152 +1,6 @@
-import { useState, useEffect } from 'react';
-<<<<<<< HEAD
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
-import About from './About.jsx';
-import Profile from './Profile.jsx';
-import Statistics from './Statistics.jsx';
-import { registerUser, loginUser, getServerMessage } from './api.js';
-import './App.css';
-import galkaIcon from './assets/galka.png';
-import statIcon from './assets/stat.png';
-import chelIcon from './assets/chel.png';
-
-function Navigation() {
-  return (
-    <nav className="paper-nav">
-
-      <Link to="/" className="nav-logo-link">
-        <div className="nav-logo">
-          <div className="logo-tape"></div>
-          <h1>
-            Поток
-          </h1>
-        </div>
-      </Link>
-
-      <div className="nav-links">
-        <Link to="/" className="nav-link">Главная</Link>
-        <Link to="/about" className="nav-link">О проекте</Link>
-        <Link to="/profile" className="nav-link">Профиль</Link>
-        <Link to="/statistics" className="nav-link">Статистика</Link>
-        <Link to="/login" className="paper-btn primary-btn">Войти</Link>
-      </div>
-
-    </nav>
-  );
-}
-
-function Home() {
-  const [serverMessage, setServerMessage] = useState("");
-
-  useEffect(() => {
-    getServerMessage()
-      .then((data) => setServerMessage(data.message))
-      .catch(() => setServerMessage(""));
-  }, []);
-
-  return (
-    <section className="paper-page">
-
-      <div className="hero-section">
-
-        <div className="hero-left">
-
-          <div className="stamp stamp-approved">
-            Организуй свою жизнь
-          </div>
-
-          <h1 className="paper-title hero-title">
-            Создавай
-            <br />
-            полезные
-            <br />
-            привычки
-          </h1>
-
-          <p className="paper-text hero-text">
-            Следи за ежедневными привычками,
-            анализируй прогресс и постепенно
-            достигай своих целей.
-          </p>
-
-          {serverMessage && (
-            <div className="paper-note">
-              <span className="note-icon">📌</span>
-              <span>{serverMessage}</span>
-            </div>
-          )}
-
-          <Link to="/login" className="paper-btn primary-btn glued-btn">
-            Начать →
-          </Link>
-
-        </div>
-
-        <div className="hero-right">
-
-          <div className="paper-scene">
-
-            <div className="scene-sun"></div>
-
-            <div className="scene-cloud cloud-1"></div>
-            <div className="scene-cloud cloud-2"></div>
-
-            <div className="mountain mountain-1"></div>
-            <div className="mountain mountain-2"></div>
-            <div className="mountain mountain-3"></div>
-
-            <div className="tree tree-1"></div>
-            <div className="tree tree-2"></div>
-            <div className="tree tree-3"></div>
-
-            <div className="house"></div>
-
-          </div>
-
-        </div>
-
-      </div>
-
-      <div className="paper-features">
-
-        <div className="feature-item soft-shadow">
-          <div className="feature-icon">
-            <img src={galkaIcon} alt="Привычки" className="icon-image" />
-          </div>
-          <h3>Привычки</h3>
-          <p className="feature-text">
-            Добавляй ежедневные привычки
-            и отмечай выполнение.
-          </p>
-        </div>
-
-        <div className="feature-item soft-shadow">
-          <div className="feature-icon">
-            <img src={statIcon} alt="Статистика" className="icon-image" />
-          </div>
-          <h3>Статистика</h3>
-          <p className="feature-text">
-            Следи за сериями,
-            процентом выполнения
-            и прогрессом.
-          </p>
-        </div>
-
-        <div className="feature-item soft-shadow">
-          <div className="feature-icon">
-            <img src={chelIcon} alt="Цели" className="icon-image" />
-          </div>
-          <h3>Цели</h3>
-          <p className="feature-text">
-            Формируй новые полезные
-            привычки постепенно.
-          </p>
-        </div>
-      </div>
-
-    </section>
-  );
-}
+import { useState } from 'react';
+import { registerUser, loginUser } from '../../api.js';
+import './Login.css';
 
 function Login({ onLogin }) {
   const [showRegister, setShowRegister] = useState(false);
@@ -159,9 +13,9 @@ function Login({ onLogin }) {
   const [passwordInput, setPasswordInput] = useState('');
   const [rememberMe, setRememberMe] = useState(false);
 
-  const [regNickname, setRegNickname] = useState('');
   const [regEmail, setRegEmail] = useState('');
   const [regPassword, setRegPassword] = useState('');
+  const [regNickname, setRegNickname] = useState('');
   const [regGender, setRegGender] = useState('');
   const [regBirthDate, setRegBirthDate] = useState('');
 
@@ -190,11 +44,11 @@ function Login({ onLogin }) {
     try {
       setError('');
 
-      // 1. Простая проверка на пустые поля (локально)
       if (!regEmail || !regPassword || !regNickname || !regGender || !regBirthDate) {
         setError('Заполните все поля');
         return;
       }
+
       if (regPassword.length < 8) {
         setError('Пароль должен быть минимум 8 символов');
         return;
@@ -205,23 +59,18 @@ function Login({ onLogin }) {
         return;
       }
 
-      // 2. ОДИН запрос к серверу. Сохраняем ответ именно в 'data'
-      const data = await registerUser({
-        nickname: regNickname,
-        email: regEmail,
+      const result = await registerUser({
+        login: regEmail,
         password: regPassword,
-        sex: regGender,
-        birthdate: regBirthDate
+        nickname: regNickname,
+        gender: regGender,
+        birthDate: regBirthDate
       });
 
-      // 3. Теперь 'data' определена и мы её проверяем
-      if (data.success) {
-        // Если в бэкенде поле называется message, будет текст. 
-        // Если нет - выведется стандартная фраза.
-        setBannerMessage(`🎉 ${data.message || 'Регистрация прошла успешно!'}`);
+      if (result.success) {
+        setBannerMessage(`🎉 ${result.message}`);
         setShowBanner(true);
 
-        // Очищаем форму
         setRegEmail('');
         setRegPassword('');
         setRegNickname('');
@@ -231,10 +80,9 @@ function Login({ onLogin }) {
 
         setTimeout(() => setShowBanner(false), 5000);
       } else {
-        setError(data.message || 'Ошибка регистрации');
+        setError(result.message || 'Ошибка регистрации');
       }
     } catch (err) {
-      // Сюда попадут ошибки типа "Email занят" или ошибки сети
       setError(err.message);
     }
   };
@@ -343,8 +191,6 @@ function Login({ onLogin }) {
               />
             </div>
 
-
-
             <div className="form-group">
               <label className="paper-label">Пол:</label>
               <select
@@ -381,52 +227,5 @@ function Login({ onLogin }) {
     </div>
   );
 }
-=======
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Navigation from './components/Navigation/Navigation.jsx';
-import Home from './components/Home/Home.jsx';
-import About from './components/About/About.jsx';
-import Login from './components/Login/Login.jsx';
-import Profile from './components/Profile/Profile.jsx';
-import Statistics from './components/Statistics/Statistics.jsx';
-import './shared/shared.css';
->>>>>>> client
 
-function App() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [currentUser, setCurrentUser] = useState(null);
-
-  useEffect(() => {
-    const savedLogin = localStorage.getItem('rememberedLogin');
-    const savedPassword = localStorage.getItem('rememberedPassword');
-    if (savedLogin && savedPassword) {
-      setIsLoggedIn(true);
-      setCurrentUser({ login: savedLogin, nickname: savedLogin });
-    }
-  }, []);
-
-  const handleLogin = (userData) => {
-    setIsLoggedIn(true);
-    setCurrentUser(userData);
-  };
-
-  return (
-    <Router>
-      <div className="app craft-paper-bg">
-        <Navigation />
-
-        <main className="main-content">
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/about" element={<About />} />
-            <Route path="/login" element={<Login onLogin={handleLogin} />} />
-            <Route path="/profile" element={<Profile user={currentUser} isLoggedIn={isLoggedIn} />} />
-            <Route path="/statistics" element={<Statistics isLoggedIn={isLoggedIn} />} />
-          </Routes>
-        </main>
-      </div>
-    </Router>
-  );
-}
-
-export default App;
+export default Login;

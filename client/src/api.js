@@ -1,6 +1,6 @@
 const API_URL = "";
 
-// Регистрация — адаптируем поля под бэкенд
+// Регистрация
 export const registerUser = async (userData) => {
   try {
     const response = await fetch(`${API_URL}/api/auth/register`, {
@@ -20,7 +20,6 @@ export const registerUser = async (userData) => {
     const data = await response.json();
 
     if (!response.ok) {
-      // Бэкенд может вернуть ошибки валидации
       if (data.errors) {
         const messages = data.errors.map(e => e.message).join(', ');
         throw new Error(messages);
@@ -28,14 +27,14 @@ export const registerUser = async (userData) => {
       throw new Error(data.message || 'Ошибка регистрации');
     }
 
-    return { success: true, ...data };  // ← добавляем success для совместимости
+    return { success: true, ...data };
   } catch (error) {
     console.error('Ошибка:', error);
     throw error;
   }
 };
 
-// Вход — бэкенд ждёт email, а не login
+// Вход
 export const loginUser = async (email, password) => {
   try {
     const response = await fetch(`${API_URL}/api/auth/login`, {
@@ -43,7 +42,7 @@ export const loginUser = async (email, password) => {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ email, password }),  // ← email вместо login
+      body: JSON.stringify({ email, password }),
     });
 
     const data = await response.json();
@@ -52,7 +51,7 @@ export const loginUser = async (email, password) => {
       throw new Error(data.message || 'Ошибка входа');
     }
 
-    return { success: true, ...data };  // ← добавляем success
+    return { success: true, ...data };
   } catch (error) {
     console.error('Ошибка:', error);
     throw error;

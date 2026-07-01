@@ -1,0 +1,98 @@
+/* ---------- О ПРОЕКТЕ ---------- */
+
+.about-description {
+    background: #fffdf7;
+    padding: 30px;
+    border-radius: 18px;
+    box-shadow: 0 12px 25px rgba(0, 0, 0, .08);
+    margin-bottom: 35px;
+    transform: rotate(-1deg);
+}
+
+.about-description p {
+    font-size: 22px;
+    line-height: 1.7;
+    margin-bottom: 10px;
+}
+
+.about-description strong {
+    color: #70553d;
+    font-family: "Special Elite", cursive;
+}
+
+.section-title {
+    margin: 40px 0 25px;
+    text-align: center;
+    font-size: 36px;
+    font-family: "Special Elite", cursive;
+}
+
+.developers-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 25px;
+}
+
+.developer-card {
+    background: #faf6e8;
+    padding: 28px;
+    border-radius: 18px;
+    text-align: center;
+    box-shadow: 0 12px 24px rgba(0, 0, 0, .08);
+    transition: .3s;
+    position: relative;
+}
+
+.developer-card:nth-child(1) { transform: rotate(-2deg); }
+.developer-card:nth-child(2) { transform: rotate(2deg); }
+.developer-card:nth-child(3) { transform: rotate(-1deg); }
+
+.developer-card:hover {
+    transform: translateY(-8px) rotate(0);
+}
+
+.dev-icon {
+    width: 120px;
+    height: 120px;
+    margin: 0 auto 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.5);
+    border-radius: 50%;
+}
+
+.dev-name {
+    font-size: 28px;
+    font-family: "Special Elite", cursive;
+    margin-bottom: 10px;
+}
+
+.dev-role {
+    color: #7b644d;
+    font-size: 18px;
+    margin-bottom: 12px;
+    font-family: "Patrick Hand", cursive;
+}
+
+.dev-desc {
+    line-height: 1.6;
+    font-size: 17px;
+}
+
+.about-footer {
+    margin-top: 40px;
+    text-align: center;
+    font-size: 18px;
+    color: #7c6b57;
+}
+
+@media (max-width: 900px) {
+    .developers-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .dev-desc {
+        font-size: 18px;
+    }
+}
