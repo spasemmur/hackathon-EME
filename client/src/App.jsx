@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { getProfile } from './api';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import About from './About.jsx';
 import Profile from './Profile.jsx';
@@ -8,6 +9,7 @@ import './App.css';
 import galkaIcon from './assets/galka.png';
 import statIcon from './assets/stat.png';
 import chelIcon from './assets/chel.png';
+
 
 function Navigation() {
   return (
@@ -382,21 +384,29 @@ function Login({ onLogin }) {
 }
 
 function App() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [currentUser, setCurrentUser] = useState(null);
+  const [user, setUser] = useState(null);
+  const [isAuth, setIsAuth] = useState(false);
 
   useEffect(() => {
-    const savedLogin = localStorage.getItem('rememberedLogin');
-    const savedPassword = localStorage.getItem('rememberedPassword');
-    if (savedLogin && savedPassword) {
-      setIsLoggedIn(true);
-      setCurrentUser({ login: savedLogin, nickname: savedLogin });
-    }
+    const initAuth = async () => {
+      if (localStorage.getItem('token')) {
+        try {
+          const data = await getProfile();
+          setUser(data);
+          setIsAuth(true);
+        } catch (e) {
+          console.log("Сессия истекла");
+        }
+      }
+    };
+    initAuth();
   }, []);
 
-  const handleLogin = (userData) => {
-    setIsLoggedIn(true);
-    setCurrentUser(userData);
+  const logout = () => {
+    localStorage.removeItem('token');
+    setUser(null);
+    setIsAuth(false);
+    window.location.href = '/'; // Редирект на главную
   };
 
   return (
