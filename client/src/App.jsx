@@ -5,8 +5,8 @@ import Home from './components/Home/Home.jsx';
 import About from './components/About/About.jsx';
 import Login from './components/Login/Login.jsx';
 import Profile from './components/Profile/Profile.jsx';
+import { getProfile } from './api'; // ✅ импорт
 import './shared/shared.css';
-
 
 function App() {
   const [user, setUser] = useState(null);
@@ -27,34 +27,43 @@ function App() {
     initAuth();
   }, []);
 
-  const logout = () => {
+  // ✅ функция входа — вызывается после успешного логина/регистрации
+  const handleLogin = (userData) => {
+    setUser(userData);
+    setIsAuth(true);
+  };
+
+  // ✅ переименовали logout в handleLogout для единообразия
+  const handleLogout = () => {
     localStorage.removeItem('token');
     setUser(null);
     setIsAuth(false);
-    window.location.href = '/'; // Редирект на главную
+    window.location.href = '/';
   };
 
   return (
     <Router>
       <div className="app craft-paper-bg">
         <Navigation
-          isLoggedIn={isLoggedIn}
-          onLogout={handleLogout}
-          nickname={currentUser?.nickname}
+          isLoggedIn={isAuth}           // ✅ было: isLoggedIn
+          onLogout={handleLogout}        // ✅ теперь существует
+          nickname={user?.nickname}      // ✅ было: currentUser
         />
 
         <main className="main-content">
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/about" element={<About />} />
-            <Route path="/login" element={<Login onLogin={handleLogin} />} />
+            <Route path="/login" element={
+              <Login onLogin={handleLogin} /> // ✅ теперь существует
+            } />
             <Route
               path="/profile"
               element={
                 <Profile
-                  user={currentUser}
-                  isLoggedIn={isLoggedIn}
-                  onLogout={handleLogout}
+                  user={user}               // ✅ было: currentUser
+                  isLoggedIn={isAuth}       // ✅ было: isLoggedIn
+                  onLogout={handleLogout}   // ✅ теперь существует
                 />
               }
             />
