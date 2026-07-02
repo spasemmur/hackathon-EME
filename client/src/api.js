@@ -36,7 +36,7 @@ const checkResponse = async (response) => {
   return data;
 };
 
-// Умное получение токена (проверяем оба хранилища)
+// ✅ Умное получение токена (проверяем оба хранилища)
 const getToken = () => {
   // Сначала проверяем localStorage (долгосрочное)
   const localToken = localStorage.getItem('token');
@@ -58,21 +58,31 @@ const getToken = () => {
 
 // ✅ Умное сохранение токена (учитывает rememberMe)
 const saveToken = (token, rememberMe = false) => {
+  // Очищаем оба хранилища перед сохранением
+  clearAuth();
+
   if (rememberMe) {
     localStorage.setItem('token', token);
     localStorage.setItem('rememberMe', 'true');
     localStorage.setItem('tokenExpiry', Date.now() + 30 * 24 * 60 * 60 * 1000); // 30 дней
   } else {
     sessionStorage.setItem('token', token);
-    localStorage.setItem('rememberMe', 'false');
   }
 };
 
-// Заголовки с авторизацией
-const authHeaders = () => ({
-  'Content-Type': 'application/json',
-  'Authorization': `Bearer ${getToken()}`
-});
+// ✅ Заголовки с авторизацией (проверяем что токен существует)
+const authHeaders = () => {
+  const token = getToken();
+
+  if (!token) {
+    throw new Error('Токен не найден. Войдите в систему.');
+  }
+
+  return {
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${token}`
+  };
+};
 
 // ==================== АУТЕНТИФИКАЦИЯ ====================
 
@@ -81,7 +91,10 @@ export const getProfile = async () => {
   if (!token) throw new Error('Токен не найден');
 
   const response = await fetch(`${API_URL}/api/auth/me`, {
-    headers: authHeaders()
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    }
   });
 
   return await checkResponse(response);
@@ -159,10 +172,10 @@ export const logout = () => {
 // ==================== ЗАДАЧИ ====================
 
 export const getTasks = async (filters = {}) => {
-  const queryParams = new URLSearchParams(filters).toString();
-  const url = `${API_URL}/api/tasks${queryParams ? '?' + queryParams : ''}`;
-
-  const response = await fetch(url, { headers: authHeaders() });
+  const response = await fetch(
+    `${API_URL}/api/tasks?${new URLSearchParams(filters).toString()}`,
+    { headers: authHeaders() }
+  );
   const data = await checkResponse(response);
   return data.tasks || [];
 };
@@ -266,9 +279,16 @@ export const deleteGoal = async (id) => {
   return true;
 };
 
+// ==================== АВАТАР ====================
+
 // ✅ Загрузка аватара на сервер
 export const uploadAvatar = async (file) => {
   const token = getToken();
+
+  if (!token) {
+    throw new Error('Токен не найден. Войдите в систему.');
+  }
+
   const formData = new FormData();
   formData.append('avatar', file);
 
@@ -287,8 +307,6 @@ export const uploadAvatar = async (file) => {
 
 // Удаление аватара
 export const deleteAvatar = async () => {
-  const token = getToken();
-
   const response = await fetch(`${API_URL}/api/auth/delete-avatar`, {
     method: 'DELETE',
     headers: authHeaders()
