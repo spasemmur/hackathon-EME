@@ -7,6 +7,7 @@ import Login from './components/Login/Login.jsx';
 import Register from './components/Register/Register.jsx';
 import Profile from './components/Profile/Profile.jsx';
 import Dashboard from './components/Dashboard/Dashboard.jsx';
+import Footer from './components/Footer/Footer.jsx';
 import { getProfile } from './api';
 import './shared/shared.css';
 
@@ -85,6 +86,7 @@ function App() {
           </Routes>
         </main>
       </div>
+      <Footer/>
     </Router>
   );
 }
