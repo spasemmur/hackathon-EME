@@ -265,3 +265,35 @@ export const deleteGoal = async (id) => {
   await checkResponse(response);
   return true;
 };
+
+// ✅ Загрузка аватара на сервер
+export const uploadAvatar = async (file) => {
+  const token = getToken();
+  const formData = new FormData();
+  formData.append('avatar', file);
+
+  const response = await fetch(`${API_URL}/api/auth/upload-avatar`, {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${token}`
+      // Content-Type НЕ устанавливаем для FormData!
+    },
+    body: formData
+  });
+
+  const data = await checkResponse(response);
+  return data.avatarUrl;
+};
+
+// Удаление аватара
+export const deleteAvatar = async () => {
+  const token = getToken();
+
+  const response = await fetch(`${API_URL}/api/auth/delete-avatar`, {
+    method: 'DELETE',
+    headers: authHeaders()
+  });
+
+  await checkResponse(response);
+  return true;
+};
