@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import Navigation from './components/Navigation/Navigation.jsx';
 import Home from './components/Home/Home.jsx';
 import About from './components/About/About.jsx';
@@ -16,7 +16,7 @@ import './shared/shared.css';
 function App() {
   const [user, setUser] = useState(null);
   const [isAuth, setIsAuth] = useState(false);
-
+  
   useEffect(() => {
     const initAuth = async () => {
       const token = localStorage.getItem('token') || sessionStorage.getItem('token');
@@ -64,6 +64,7 @@ function App() {
 
   return (
     <Router>
+      <div><title>Поток</title></div>
       <div className="app craft-paper-bg">
         <Navigation
           isLoggedIn={isAuth}

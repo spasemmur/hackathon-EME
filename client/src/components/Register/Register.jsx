@@ -100,6 +100,7 @@ function Register({ onLogin }) {
 
     return (
         <div className="paper-page login-page">
+            <title>Регистрация</title>
             <div className="paper-card auth-card torn-edge">
                 <div className="tape tape-top-center"></div>
                 <div className="paper-crease"></div>

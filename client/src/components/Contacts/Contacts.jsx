@@ -1,4 +1,3 @@
-import React from "react";
 import './Contacts.css';
 
 function Contacts() {
@@ -30,8 +29,8 @@ function Contacts() {
   ];
 
   return (
-    <div className="paper-page about-page">
-      <div className="paper-card about-card torn-edge">
+    <div className="paper-page contacts-page">
+      <div className="paper-card contacts-card torn-edge">
         <div className="tape tape-top-center"></div>
         <div className="paper-crease"></div>
 

@@ -30,6 +30,7 @@ function About() {
 
   return (
     <div className="paper-page about-page">
+      <title>О проекте</title>
       <div className="paper-card about-card torn-edge">
         <div className="tape tape-top-center"></div>
         <div className="paper-crease"></div>

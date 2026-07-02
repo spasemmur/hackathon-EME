@@ -11,14 +11,12 @@ const featureIcons = {
 };
 
 function Home({ isAuth, user }) {
-  // Если пользователь вошел — перенаправляем на задачи
   if (isAuth) {
     return <Navigate to="/tasks" replace />;
   }
 
   return (
     <section className="paper-page home-page">
-      {/* ===== HERO СЕКЦИЯ ===== */}
       <div className="hero-section">
         <div className="hero-paper">
           <div className="tape tape-top-left"></div>
@@ -33,13 +31,10 @@ function Home({ isAuth, user }) {
             фокусироваться на важном, отслеживать прогресс и достигать целей.
           </p>
 
-          {/* Кнопка "Начать" только для неавторизованных */}
           <Link to="/login" className="paper-btn primary-btn glued-btn hero-btn">
             Начать
           </Link>
         </div>
-
-        {/* Декоративная сцена */}
         <div className="hero-scene">
           <div className="scene-sky">
             <div className="scene-sun"></div>
