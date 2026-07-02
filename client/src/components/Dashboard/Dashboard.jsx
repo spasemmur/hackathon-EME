@@ -205,6 +205,7 @@ function Dashboard({ user }) {
 
     return (
         <div className="dashboard">
+            <title>Панель привычек</title>
             <aside className="dash-sidebar">
                 <div className="sidebar-nav">
                     <div

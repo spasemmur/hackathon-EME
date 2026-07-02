@@ -38,6 +38,7 @@ function Profile({ user, isLoggedIn }) {
 
   return (
     <div className="paper-page profile-page">
+      <title>Профиль</title>
       <div className="paper-card profile-card torn-edge">
         <div className="tape tape-top-left"></div>
         <div className="tape tape-top-right"></div>
