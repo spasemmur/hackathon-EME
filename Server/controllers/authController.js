@@ -158,7 +158,7 @@ exports.getProfile = async (req, res) => {
 };
 
 // ✅ Загрузка аватара
-const upload = require('../middleware/upload');
+const upload = require('../middlewares/upload');
 
 exports.uploadAvatar = [
     upload.single('avatar'),
