@@ -175,7 +175,7 @@ exports.toggleTask = async (req, res) => {
 };
 
 // Получить статистику
-eexports.getStats = async (req, res) => {
+exports.getStats = async (req, res) => {
     try {
         const userId = req.user.id;
 
