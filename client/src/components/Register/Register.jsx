@@ -44,17 +44,39 @@ function Register({ onLogin }) {
             return;
         }
 
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(formData.email)) {
+            setError('Введите корректный email');
+            return;
+        }
+
+        if (formData.password.length < 8) {
+            setError('Пароль должен быть минимум 8 символов');
+            return;
+        }
+
+        if (formData.nickname.length < 3) {
+            setError('Никнейм должен быть минимум 3 символа');
+            return;
+        }
+
         setLoading(true);
 
         try {
-            // ✅ Передаём rememberMe = true для регистрации (всегда запоминаем)
+            // ✅ Преобразуем ДД.ММ.ГГГГ в ГГГГ-ММ-ДД
+            let formattedDate = formData.birthdate;
+            if (formData.birthdate.includes('.')) {
+                const [day, month, year] = formData.birthdate.split('.');
+                formattedDate = `${year}-${month}-${day}`;
+            }
+
             const result = await registerUser({
                 email: formData.email,
                 password: formData.password,
                 nickname: formData.nickname,
                 sex: formData.sex,
                 birthdate: formattedDate
-            }, true); // ✅ rememberMe = true
+            }, true);
 
             if (result.success) {
                 const userData = result.user || result;
@@ -66,6 +88,8 @@ function Register({ onLogin }) {
                 });
 
                 setTimeout(() => navigate('/tasks'), 500);
+            } else {
+                setError(result.message || 'Ошибка регистрации');
             }
         } catch (err) {
             setError(err.message);
