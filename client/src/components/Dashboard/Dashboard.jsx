@@ -13,13 +13,17 @@ import {
 import './Dashboard.css';
 
 function Dashboard({ user }) {
-    const [filter, setFilter] = useState('all'); // all, today, week, goals
+    const [filter, setFilter] = useState('all');
     const [tasks, setTasks] = useState([]);
     const [goals, setGoals] = useState([]);
     const [stats, setStats] = useState(null);
     const [loading, setLoading] = useState(true);
     const [showNewTaskModal, setShowNewTaskModal] = useState(false);
     const [showNewGoalModal, setShowNewGoalModal] = useState(false);
+
+    // ✅ Добавили состояние для ошибок в модалках
+    const [taskError, setTaskError] = useState('');
+    const [goalError, setGoalError] = useState('');
 
     const [newTask, setNewTask] = useState({
         title: '',
@@ -35,7 +39,7 @@ function Dashboard({ user }) {
         target_value: ''
     });
 
-    // Загрузка данных
+    // ✅ Загрузка данных при монтировании И при изменении filter
     useEffect(() => {
         loadData();
     }, [filter]);
@@ -43,28 +47,49 @@ function Dashboard({ user }) {
     const loadData = async () => {
         try {
             setLoading(true);
-            const [tasksData, goalsData, statsData] = await Promise.all([
-                getTasks({ filter: filter === 'all' ? 'all' : filter === 'completed' ? 'completed' : 'active' }),
-                getGoals(),
-                getTaskStats()
+
+            let apiFilter = 'all';
+            if (filter === 'active') apiFilter = 'active';
+            else if (filter === 'completed') apiFilter = 'completed';
+
+            // ✅ Загружаем задачи и цели, даже если статистика упала
+            const [tasksData, goalsData] = await Promise.all([
+                getTasks({ filter: apiFilter }),
+                getGoals()
             ]);
 
-            setTasks(tasksData);
-            setGoals(goalsData);
+            // ✅ Статистику загружаем отдельно с обработкой ошибок
+            let statsData = { total: 0, completed: 0, productivity: 0 };
+            try {
+                statsData = await getTaskStats();
+            } catch (statsError) {
+                console.warn('⚠️ Не удалось загрузить статистику, используем значения по умолчанию');
+                // Вычисляем статистику локально
+                const completed = tasksData.filter(t => t.is_completed).length;
+                statsData = {
+                    total: tasksData.length,
+                    completed: completed,
+                    productivity: tasksData.length > 0 ? Math.round((completed / tasksData.length) * 100) : 0
+                };
+            }
+
+            setTasks(tasksData || []);
+            setGoals(goalsData || []);
             setStats(statsData);
         } catch (error) {
-            console.error('Ошибка загрузки:', error);
+            console.error('❌ Ошибка загрузки данных:', error);
+            setTasks([]);
+            setGoals([]);
+            setStats({ total: 0, completed: 0, productivity: 0 });
         } finally {
             setLoading(false);
         }
     };
 
-    // ✅ Обработчик клика по сайдбару
     const handleSidebarClick = (clickedFilter) => {
         setFilter(clickedFilter);
     };
 
-    // Переключение задачи
     const handleToggleTask = async (id) => {
         try {
             const updatedTask = await toggleTask(id);
@@ -75,11 +100,21 @@ function Dashboard({ user }) {
         }
     };
 
-    // Создание задачи
+    // ✅ Создание задачи с ошибкой в форме
     const handleCreateTask = async (e) => {
         e.preventDefault();
+        setTaskError('');
+
+        if (!newTask.title.trim()) {
+            setTaskError('Введите название задачи');
+            return;
+        }
+
+        console.log('📤 Отправляем задачу:', newTask);
+
         try {
             const createdTask = await createTask(newTask);
+            console.log('✅ Задача создана:', createdTask);
             setTasks([createdTask, ...tasks]);
             setShowNewTaskModal(false);
             setNewTask({
@@ -91,14 +126,22 @@ function Dashboard({ user }) {
             });
             loadData();
         } catch (error) {
-            console.error('Ошибка:', error);
-            alert('Не удалось создать задачу');
+            console.error('❌ Ошибка создания задачи:', error);
+            console.error('❌ Текст ошибки:', error.message);
+            setTaskError(error.message || 'Не удалось создать задачу. Проверьте консоль сервера.');
         }
     };
 
-    // ✅ Создание цели
+    // ✅ Создание цели с ошибкой в форме
     const handleCreateGoal = async (e) => {
         e.preventDefault();
+        setGoalError('');
+
+        if (!newGoal.title.trim()) {
+            setGoalError('Введите название цели');
+            return;
+        }
+
         try {
             const createdGoal = await createGoal({
                 ...newGoal,
@@ -108,16 +151,15 @@ function Dashboard({ user }) {
             setShowNewGoalModal(false);
             setNewGoal({
                 title: '',
-                icon: '🎯',
+                icon: '',
                 target_value: ''
             });
         } catch (error) {
-            console.error('Ошибка:', error);
-            alert('Не удалось создать цель');
+            console.error('Ошибка создания цели:', error);
+            setGoalError(error.message || 'Не удалось создать цель');
         }
     };
 
-    // Удаление цели
     const handleDeleteGoal = async (id) => {
         if (!confirm('Удалить цель?')) return;
         try {
@@ -128,16 +170,28 @@ function Dashboard({ user }) {
         }
     };
 
-    // Обновление прогресса цели
-    const handleUpdateGoalProgress = async (goalId, currentValue) => {
-        try {
-            const updatedGoal = await updateGoalProgress(goalId, currentValue);
-            setGoals(goals.map(g => g.id === goalId ? updatedGoal : g));
-        } catch (error) {
-            console.error('Ошибка:', error);
+    // Фильтрация задач для sidebar
+    const getFilteredTasks = () => {
+        if (filter === 'today') {
+            const today = new Date().toISOString().split('T')[0];
+            return tasks.filter(t => t.due_date === today);
         }
+        if (filter === 'week') {
+            const today = new Date();
+            const weekFromNow = new Date(today.getTime() + 7 * 24 * 60 * 60 * 1000);
+            return tasks.filter(t => {
+                if (!t.due_date) return false;
+                const dueDate = new Date(t.due_date);
+                return dueDate >= today && dueDate <= weekFromNow;
+            });
+        }
+        if (filter === 'goals') {
+            return []; // Для целей показываем только правую панель
+        }
+        return tasks;
     };
 
+    const displayTasks = getFilteredTasks();
     const completedCount = stats?.completed || tasks.filter(t => t.is_completed).length;
     const productivity = stats?.productivity || (tasks.length > 0 ? Math.round((completedCount / tasks.length) * 100) : 0);
 
@@ -147,7 +201,6 @@ function Dashboard({ user }) {
 
     return (
         <div className="dashboard">
-            {/* Sidebar */}
             <aside className="dash-sidebar">
                 <div className="sidebar-nav">
                     <div
@@ -163,10 +216,7 @@ function Dashboard({ user }) {
                     >
                         <span>📅 Сегодня</span>
                         <span className="sidebar-badge">
-                            {tasks.filter(t => {
-                                const today = new Date().toISOString().split('T')[0];
-                                return t.due_date === today;
-                            }).length}
+                            {tasks.filter(t => t.due_date === new Date().toISOString().split('T')[0]).length}
                         </span>
                     </div>
                     <div
@@ -203,13 +253,19 @@ function Dashboard({ user }) {
                 </div>
             </aside>
 
-            {/* Main content */}
             <main className="dash-main">
                 <div className="dash-header">
-                    <h1 className="dash-title">Мои задачи</h1>
+                    <h1 className="dash-title">
+                        {filter === 'all' && 'Мои задачи'}
+                        {filter === 'today' && 'Задачи на сегодня'}
+                        {filter === 'week' && 'Задачи на неделю'}
+                        {filter === 'goals' && 'Мои цели'}
+                        {filter === 'active' && 'Активные задачи'}
+                        {filter === 'completed' && 'Завершённые задачи'}
+                    </h1>
                     <button
                         className="paper-btn primary-btn new-task-btn"
-                        onClick={() => setShowNewTaskModal(true)}
+                        onClick={() => { setShowNewTaskModal(true); setTaskError(''); }}
                     >
                         + Новая задача
                     </button>
@@ -218,61 +274,80 @@ function Dashboard({ user }) {
                 <div className="dash-filters">
                     <button className={`filter-btn ${filter === 'all' ? 'active' : ''}`} onClick={() => setFilter('all')}>Все</button>
                     <button className={`filter-btn ${filter === 'active' ? 'active' : ''}`} onClick={() => setFilter('active')}>Активные</button>
-                    <button className={`filter-btn ${filter === 'completed' ? 'active' : ''}`} onClick={() => setFilter('completed')}>Завершенные</button>
+                    <button className={`filter-btn ${filter === 'completed' ? 'active' : ''}`} onClick={() => setFilter('completed')}>Завершённые</button>
                 </div>
 
-                <div className="tasks-list">
-                    {tasks.length === 0 ? (
-                        <div className="empty-tasks">
-                            <p>📭 Нет задач</p>
-                            <p>Создайте первую задачу!</p>
-                        </div>
-                    ) : (
-                        tasks.map(task => (
-                            <div key={task.id} className={`task-card ${task.is_completed ? 'done' : ''}`}>
-                                <input
-                                    type="checkbox"
-                                    checked={task.is_completed}
-                                    onChange={() => handleToggleTask(task.id)}
-                                    className="task-checkbox"
-                                />
-                                <div className="task-content">
-                                    <div className={`task-title ${task.is_completed ? 'strikethrough' : ''}`}>
-                                        {task.title}
-                                    </div>
-                                    <span className="task-category">{task.category}</span>
-                                </div>
-                                <span className="task-date">📅 {task.due_date || 'Без даты'}</span>
-                                <div className="task-progress-circle" style={{
-                                    background: `conic-gradient(#7a8b5c ${task.progress}%, #e8e0d0 ${task.progress}%)`
-                                }}>
-                                    <div className="progress-inner">{task.progress}%</div>
-                                </div>
-                                <button
-                                    className="delete-task-btn"
-                                    onClick={() => deleteTask(task.id).then(loadData)}
-                                >
-                                    ✕
-                                </button>
+                {/* Если выбран фильтр "Цели" — показываем цели в центре */}
+                {filter === 'goals' ? (
+                    <div className="goals-center-view">
+                        {goals.length === 0 ? (
+                            <div className="empty-tasks">
+                                <p>🎯 Нет целей</p>
+                                <p>Создайте первую цель!</p>
                             </div>
-                        ))
-                    )}
-                </div>
+                        ) : (
+                            goals.map(goal => (
+                                <div key={goal.id} className="goal-card-center">
+                                    <span className="goal-icon-large">{goal.icon}</span>
+                                    <div className="goal-info">
+                                        <h3>{goal.title}</h3>
+                                        <div className="goal-bar-large">
+                                            <div className="goal-fill" style={{ width: `${goal.progress}%` }}></div>
+                                        </div>
+                                    </div>
+                                    <span className="goal-percent-large">{goal.progress}%</span>
+                                    <button className="delete-goal-btn" onClick={() => handleDeleteGoal(goal.id)}>✕</button>
+                                </div>
+                            ))
+                        )}
+                    </div>
+                ) : (
+                    <div className="tasks-list">
+                        {displayTasks.length === 0 ? (
+                            <div className="empty-tasks">
+                                <p>📭 Нет задач</p>
+                                <p>Создайте первую задачу!</p>
+                            </div>
+                        ) : (
+                            displayTasks.map(task => (
+                                <div key={task.id} className={`task-card ${task.is_completed ? 'done' : ''}`}>
+                                    <input
+                                        type="checkbox"
+                                        checked={task.is_completed}
+                                        onChange={() => handleToggleTask(task.id)}
+                                        className="task-checkbox"
+                                    />
+                                    <div className="task-content">
+                                        <div className={`task-title ${task.is_completed ? 'strikethrough' : ''}`}>
+                                            {task.title}
+                                        </div>
+                                        <span className="task-category">{task.category}</span>
+                                    </div>
+                                    <span className="task-date">📅 {task.due_date || 'Без даты'}</span>
+                                    <div className="task-progress-circle" style={{
+                                        background: `conic-gradient(#7a8b5c ${task.progress}%, #e8e0d0 ${task.progress}%)`
+                                    }}>
+                                        <div className="progress-inner">{task.progress}%</div>
+                                    </div>
+                                    <button className="delete-task-btn" onClick={() => deleteTask(task.id).then(loadData)}>✕</button>
+                                </div>
+                            ))
+                        )}
+                    </div>
+                )}
             </main>
 
-            {/* Right panel */}
             <aside className="dash-right">
-                {/* Goals */}
                 <div className="panel">
                     <div className="panel-header">
                         <h3>Мои цели</h3>
-                        <button className="panel-add" onClick={() => setShowNewGoalModal(true)}>+</button>
+                        <button className="panel-add" onClick={() => { setShowNewGoalModal(true); setGoalError(''); }}>+</button>
                     </div>
                     <div className="goals-list">
                         {goals.length === 0 ? (
                             <p className="empty-goals">Нет целей</p>
                         ) : (
-                            goals.map(goal => (
+                            goals.slice(0, 5).map(goal => (
                                 <div key={goal.id} className="goal-item">
                                     <span className="goal-icon">{goal.icon}</span>
                                     <div className="goal-content">
@@ -282,19 +357,12 @@ function Dashboard({ user }) {
                                         </div>
                                     </div>
                                     <span className="goal-percent">{goal.progress}%</span>
-                                    <button
-                                        className="delete-goal-btn"
-                                        onClick={() => handleDeleteGoal(goal.id)}
-                                    >
-                                        ✕
-                                    </button>
                                 </div>
                             ))
                         )}
                     </div>
                 </div>
 
-                {/* Stats */}
                 <div className="panel stats-panel">
                     <h3>Статистика</h3>
                     <div className="stats-grid">
@@ -314,17 +382,22 @@ function Dashboard({ user }) {
                 </div>
             </aside>
 
-            {/* Modal for new task */}
+            {/* Модалка задачи с ошибкой ВНУТРИ формы */}
             {showNewTaskModal && (
                 <div className="modal-overlay" onClick={() => setShowNewTaskModal(false)}>
                     <div className="modal-content" onClick={e => e.stopPropagation()}>
                         <h2>Новая задача</h2>
+
+                        {/* ✅ Ошибка показывается здесь, а не в alert */}
+                        {taskError && <div className="modal-error">⚠️ {taskError}</div>}
+
                         <form onSubmit={handleCreateTask}>
                             <div className="form-group">
                                 <label>Название *</label>
                                 <input
                                     type="text"
                                     required
+                                    placeholder="Введите название задачи"
                                     value={newTask.title}
                                     onChange={e => setNewTask({ ...newTask, title: e.target.value })}
                                 />
@@ -332,6 +405,7 @@ function Dashboard({ user }) {
                             <div className="form-group">
                                 <label>Описание</label>
                                 <textarea
+                                    placeholder="Описание (необязательно)"
                                     value={newTask.description}
                                     onChange={e => setNewTask({ ...newTask, description: e.target.value })}
                                 />
@@ -362,7 +436,7 @@ function Dashboard({ user }) {
                                 </select>
                             </div>
                             <div className="form-group">
-                                <label>Срок выполнения</label>
+                                <label>Срок выполнения <span className="optional-hint">(необязательно)</span></label>
                                 <input
                                     type="date"
                                     value={newTask.due_date}
@@ -382,11 +456,15 @@ function Dashboard({ user }) {
                 </div>
             )}
 
-            {/* ✅ Modal for new goal */}
+            {/* Модалка цели с ошибкой ВНУТРИ формы */}
             {showNewGoalModal && (
                 <div className="modal-overlay" onClick={() => setShowNewGoalModal(false)}>
                     <div className="modal-content" onClick={e => e.stopPropagation()}>
                         <h2>Новая цель</h2>
+
+                        {/* ✅ Ошибка показывается здесь */}
+                        {goalError && <div className="modal-error">⚠️ {goalError}</div>}
+
                         <form onSubmit={handleCreateGoal}>
                             <div className="form-group">
                                 <label>Название *</label>
@@ -404,22 +482,23 @@ function Dashboard({ user }) {
                                     value={newGoal.icon}
                                     onChange={e => setNewGoal({ ...newGoal, icon: e.target.value })}
                                 >
-                                    <option value="🎯"></option>
-                                    <option value="📚">📚</option>
-                                    <option value="💪">💪</option>
-                                    <option value="💧">💧</option>
-                                    <option value="🏃">🏃</option>
-                                    <option value="📝">📝</option>
-                                    <option value="🌟">🌟</option>
+                                    <option value="🎯"> Цель</option>
+                                    <option value="📚">📚 Книги</option>
+                                    <option value="💪">💪 Спорт</option>
+                                    <option value="💧">💧 Вода</option>
+                                    <option value="🏃">🏃 Бег</option>
+                                    <option value="📝">📝 Учёба</option>
+                                    <option value="🌟">🌟 Другое</option>
                                 </select>
                             </div>
                             <div className="form-group">
-                                <label>Целевое значение</label>
+                                <label>Целевое значение <span className="optional-hint">(необязательно)</span></label>
                                 <input
                                     type="number"
                                     placeholder="Например: 10"
                                     value={newGoal.target_value}
                                     onChange={e => setNewGoal({ ...newGoal, target_value: e.target.value })}
+                                    min="0"
                                 />
                             </div>
                             <div className="modal-actions">

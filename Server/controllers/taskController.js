@@ -40,6 +40,9 @@ exports.getTasks = async (req, res) => {
 
 // Создать задачу
 exports.createTask = async (req, res) => {
+    console.log('📥 POST /api/tasks:', req.body);
+    console.log('👤 User ID:', req.user?.id);
+
     try {
         const { title, description, category, priority, due_date } = req.body;
         const userId = req.user.id;
@@ -51,13 +54,15 @@ exports.createTask = async (req, res) => {
         const task = await Task.create({
             user_id: userId,
             title,
-            description,
+            description: description || null,
             category: category || 'Общее',
             priority: priority || 'средний',
-            due_date,
+            due_date: due_date || null,
             progress: 0,
             is_completed: false
         });
+
+        console.log('✅ Задача создана:', task.id);
 
         res.status(201).json({
             success: true,
@@ -65,8 +70,12 @@ exports.createTask = async (req, res) => {
             task
         });
     } catch (error) {
-        console.error('Ошибка при создании задачи:', error);
-        res.status(500).json({ message: 'Ошибка сервера' });
+        console.error('❌ Ошибка в createTask:', error);
+        console.error('❌ Stack:', error.stack);
+        res.status(500).json({
+            message: 'Ошибка сервера',
+            error: error.message
+        });
     }
 };
 

@@ -133,18 +133,32 @@ export const getTasks = async (filters = {}) => {
 export const createTask = async (taskData) => {
   const token = getToken();
 
-  const response = await fetch(`${API_URL}/api/tasks`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`
-    },
-    body: JSON.stringify(taskData)
-  });
+  console.log('📤 createTask:', taskData);
 
-  const data = await response.json();
-  if (!response.ok) throw new Error(data.message);
-  return data.task;
+  try {
+    const response = await fetch(`${API_URL}/api/tasks`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify(taskData)
+    });
+
+    console.log('📥 Response status:', response.status);
+
+    const data = await response.json();
+    console.log('📥 Response data:', data);
+
+    if (!response.ok) {
+      throw new Error(data.message || `Ошибка ${response.status}`);
+    }
+
+    return data.task;
+  } catch (error) {
+    console.error('❌ createTask error:', error);
+    throw error;
+  }
 };
 
 // Обновить задачу

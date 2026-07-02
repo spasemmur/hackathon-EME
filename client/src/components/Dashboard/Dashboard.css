@@ -608,3 +608,101 @@
     background: #faf6e8;
     transform: translateX(4px);
 }
+
+/* Ошибка внутри модалки */
+.modal-error {
+    background: #fde8e8;
+    color: #c0392b;
+    padding: 12px 16px;
+    border-radius: 10px;
+    margin-bottom: 16px;
+    font-size: 14px;
+    border: 1px solid #f5c6c6;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* Подсказка "необязательно" */
+.optional-hint {
+    font-size: 12px;
+    color: #999;
+    font-weight: normal;
+    font-style: italic;
+}
+
+/* Центральное отображение целей */
+.goals-center-view {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.goal-card-center {
+    background: #fffdf7;
+    border-radius: 14px;
+    padding: 20px 24px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.goal-card-center:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+.goal-icon-large {
+    font-size: 36px;
+}
+
+.goal-info {
+    flex: 1;
+}
+
+.goal-info h3 {
+    margin: 0 0 8px;
+    font-size: 18px;
+    color: #5a4632;
+}
+
+.goal-bar-large {
+    height: 10px;
+    background: #e8e0d0;
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.goal-percent-large {
+    font-size: 20px;
+    font-weight: bold;
+    color: #70553d;
+    min-width: 60px;
+    text-align: right;
+}
+
+.delete-goal-btn {
+    background: #f4d4d4;
+    border: none;
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    color: #c97b7b;
+    transition: all 0.2s;
+}
+
+.delete-goal-btn:hover {
+    background: #e97b7b;
+    color: white;
+}
+
+.empty-goals {
+    text-align: center;
+    padding: 20px;
+    color: #756452;
+    font-style: italic;
+}
