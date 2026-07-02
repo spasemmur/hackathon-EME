@@ -8,6 +8,7 @@ import Register from './components/Register/Register.jsx';
 import Profile from './components/Profile/Profile.jsx';
 import Dashboard from './components/Dashboard/Dashboard.jsx';
 import Footer from './components/Footer/Footer.jsx';
+import Contacts from './components/Contacts/Contacts.jsx';
 import { getProfile } from './api';
 import './shared/shared.css';
 
@@ -21,8 +22,6 @@ function App() {
         try {
           const data = await getProfile();
           console.log('📥 Ответ сервера:', data); // Для отладки
-
-          // ✅ Правильно извлекаем данные пользователя
           setUser({
             nickname: data.user?.nickname || data.nickname,
             email: data.user?.email || data.email,
@@ -55,7 +54,7 @@ function App() {
     localStorage.removeItem('token');
     setUser(null);
     setIsAuth(false);
-    window.location.href = '/login'; // ✅ Перенаправляем на страницу входа
+    window.location.href = '/login';
   };
 
   return (

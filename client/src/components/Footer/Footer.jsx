@@ -2,6 +2,7 @@ import React from "react";
 import './Footer.css';
 
 import vkIcon from '../../assets/vkLogo.svg'
+import Contacts from "../Contacts/Contacts";
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
@@ -11,9 +12,10 @@ const Footer = () => {
         <div className='footer-container'>
             <p>{currentYear}  Поток. Все права защищены</p>
             <nav className='footer-links'>
+                
                 <a href='/privacy'>Политика конфиденциальности</a>
                 <a href='/terns'>Условия использования</a>
-                <a href='/contacts'>Контакты</a>
+                <a href='/Contacts'>Контакты</a>
             </nav>
             <div className="footer-socials">
             <a href="https://github.com/spasemmur/hackathon-EME/tree/client" target="_blank" rel="noopener noreferrer" aria-label="GitHub">

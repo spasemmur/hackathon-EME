@@ -55,7 +55,6 @@ function Dashboard({ user }) {
                 getGoals()
             ]);
 
-            // Статистику загружаем отдельно
             let statsData = { total: 0, completed: 0, productivity: 0 };
             try {
                 statsData = await getTaskStats();
@@ -86,7 +85,6 @@ function Dashboard({ user }) {
         setFilter(clickedFilter);
     };
 
-    // ✅ Переключение задачи — только статус (выполнено/не выполнено)
     const handleToggleTask = async (id) => {
         try {
             const updatedTask = await toggleTask(id);
@@ -161,7 +159,6 @@ function Dashboard({ user }) {
         }
     };
 
-    // ✅ Изменение прогресса цели
     const handleChangeGoalProgress = async (goalId, delta) => {
         const goal = goals.find(g => g.id === goalId);
         if (!goal) return;
@@ -208,7 +205,6 @@ function Dashboard({ user }) {
 
     return (
         <div className="dashboard">
-            {/* Sidebar */}
             <aside className="dash-sidebar">
                 <div className="sidebar-nav">
                     <div
@@ -261,7 +257,6 @@ function Dashboard({ user }) {
                 </div>
             </aside>
 
-            {/* Main content */}
             <main className="dash-main">
                 <div className="dash-header">
                     <h1 className="dash-title">
@@ -286,7 +281,6 @@ function Dashboard({ user }) {
                     <button className={`filter-btn ${filter === 'completed' ? 'active' : ''}`} onClick={() => setFilter('completed')}>Завершённые</button>
                 </div>
 
-                {/* Если выбран фильтр "Цели" — показываем цели в центре */}
                 {filter === 'goals' ? (
                     <div className="goals-center-view">
                         {goals.length === 0 ? (
@@ -310,7 +304,6 @@ function Dashboard({ user }) {
                                         )}
                                     </div>
 
-                                    {/* ✅ Кнопки +/- для изменения прогресса */}
                                     <div className="goal-progress-controls">
                                         <button
                                             className="progress-btn minus"
@@ -350,7 +343,6 @@ function Dashboard({ user }) {
                             )
                         ) : (
                             <>
-                                {/* Если есть завершённые задачи и мы не в фильтре "Завершённые" */}
                                 {filter !== 'completed' && displayTasks.some(t => t.is_completed) && (
                                     <div className="completed-section-header">
                                         Завершённые задачи ({displayTasks.filter(t => t.is_completed).length})
@@ -388,7 +380,6 @@ function Dashboard({ user }) {
                 )}
             </main>
 
-            {/* Right panel */}
             <aside className="dash-right">
                 <div className="panel">
                     <div className="panel-header">
@@ -433,8 +424,6 @@ function Dashboard({ user }) {
                     </div>
                 </div>
             </aside>
-
-            {/* Модалка задачи */}
             {showNewTaskModal && (
                 <div className="modal-overlay" onClick={() => setShowNewTaskModal(false)}>
                     <div className="modal-content" onClick={e => e.stopPropagation()}>
@@ -504,8 +493,6 @@ function Dashboard({ user }) {
                     </div>
                 </div>
             )}
-
-            {/* Модалка цели */}
             {showNewGoalModal && (
                 <div className="modal-overlay" onClick={() => setShowNewGoalModal(false)}>
                     <div className="modal-content" onClick={e => e.stopPropagation()}>
