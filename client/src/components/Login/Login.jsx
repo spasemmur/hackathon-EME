@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { loginUser } from '../../api.js';
+import { loginUser } from '../../api';
 import './Login.css';
 
 function Login({ onLogin }) {
@@ -11,27 +11,30 @@ function Login({ onLogin }) {
   const [rememberMe, setRememberMe] = useState(false);
   const navigate = useNavigate();
 
+  // ✅ Загружаем сохранённый логин при монтировании
+  useEffect(() => {
+    const rememberedLogin = localStorage.getItem('rememberedLogin');
+    if (rememberedLogin) {
+      setLoginInput(rememberedLogin);
+      setRememberMe(true);
+    }
+  }, []);
+
   const handleLogin = async (e) => {
     e.preventDefault();
     setError('');
     setLoading(true);
 
     try {
-      const data = await loginUser(loginInput, passwordInput);
-      // data выглядит так: { token: "...", user: { id, nickname, email } }
+      // ✅ Передаём rememberMe в функцию
+      const data = await loginUser(loginInput, passwordInput, rememberMe);
 
-      if (rememberMe) {
-        localStorage.setItem('rememberedLogin', loginInput);
-      }
-
-      // Передаём данные в App.jsx
       onLogin({
         nickname: data.user?.nickname || loginInput,
         email: data.user?.email,
         id: data.user?.id
       });
 
-      // Перенаправляем на страницу задач
       navigate('/tasks');
     } catch (err) {
       setError(err.message || 'Ошибка входа');

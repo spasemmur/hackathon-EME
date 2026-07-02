@@ -11,10 +11,19 @@ const safeJson = async (response) => {
   }
 };
 
+// ✅ Функция для очистки токена (используется везде)
+export const clearAuth = () => {
+  localStorage.removeItem('token');
+  localStorage.removeItem('tokenExpiry');
+  localStorage.removeItem('rememberMe');
+  localStorage.removeItem('rememberedLogin');
+  sessionStorage.removeItem('token');
+};
+
 // Универсальная функция для проверки ответа
 const checkResponse = async (response) => {
   if (response.status === 401) {
-    localStorage.removeItem('token');
+    clearAuth(); // ✅ Очищаем оба хранилища
     throw new Error('Сессия истекла. Войдите снова.');
   }
 
@@ -27,8 +36,37 @@ const checkResponse = async (response) => {
   return data;
 };
 
-// Помощник для получения токена
-const getToken = () => localStorage.getItem('token');
+// Умное получение токена (проверяем оба хранилища)
+const getToken = () => {
+  // Сначала проверяем localStorage (долгосрочное)
+  const localToken = localStorage.getItem('token');
+  const localExpiry = localStorage.getItem('tokenExpiry');
+
+  if (localToken && localExpiry) {
+    if (Date.now() < parseInt(localExpiry)) {
+      return localToken;
+    } else {
+      // Токен истёк — удаляем
+      clearAuth();
+      return null;
+    }
+  }
+
+  // Потом проверяем sessionStorage (краткосрочное)
+  return sessionStorage.getItem('token');
+};
+
+// ✅ Умное сохранение токена (учитывает rememberMe)
+const saveToken = (token, rememberMe = false) => {
+  if (rememberMe) {
+    localStorage.setItem('token', token);
+    localStorage.setItem('rememberMe', 'true');
+    localStorage.setItem('tokenExpiry', Date.now() + 30 * 24 * 60 * 60 * 1000); // 30 дней
+  } else {
+    sessionStorage.setItem('token', token);
+    localStorage.setItem('rememberMe', 'false');
+  }
+};
 
 // Заголовки с авторизацией
 const authHeaders = () => ({
@@ -49,7 +87,8 @@ export const getProfile = async () => {
   return await checkResponse(response);
 };
 
-export const registerUser = async (userData) => {
+// ✅ Регистрация с учётом rememberMe
+export const registerUser = async (userData, rememberMe = false) => {
   const response = await fetch(`${API_URL}/api/auth/register`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -64,8 +103,13 @@ export const registerUser = async (userData) => {
 
   const data = await safeJson(response);
 
+  // ✅ Сохраняем токен с учётом rememberMe
   if (response.ok && data.token) {
-    localStorage.setItem('token', data.token);
+    saveToken(data.token, rememberMe);
+
+    if (rememberMe && userData.email) {
+      localStorage.setItem('rememberedLogin', userData.email);
+    }
   }
 
   if (!response.ok) {
@@ -79,7 +123,8 @@ export const registerUser = async (userData) => {
   return { success: true, ...data };
 };
 
-export const loginUser = async (login, password) => {
+// ✅ Логин с учётом rememberMe
+export const loginUser = async (login, password, rememberMe = false) => {
   const response = await fetch(`${API_URL}/api/auth/login`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -88,8 +133,15 @@ export const loginUser = async (login, password) => {
 
   const data = await safeJson(response);
 
+  // ✅ Сохраняем токен с учётом rememberMe
   if (response.ok && data.token) {
-    localStorage.setItem('token', data.token);
+    saveToken(data.token, rememberMe);
+
+    if (rememberMe) {
+      localStorage.setItem('rememberedLogin', login);
+    } else {
+      localStorage.removeItem('rememberedLogin');
+    }
   }
 
   if (!response.ok) {
@@ -97,6 +149,11 @@ export const loginUser = async (login, password) => {
   }
 
   return data;
+};
+
+// ✅ Функция выхода
+export const logout = () => {
+  clearAuth();
 };
 
 // ==================== ЗАДАЧИ ====================
@@ -162,7 +219,6 @@ export const getTaskStats = async () => {
     return data.stats;
   } catch (error) {
     console.warn('⚠️ Статистика недоступна:', error.message);
-    // Возвращаем пустую статистику вместо ошибки
     return { total: 0, completed: 0, active: 0, productivity: 0 };
   }
 };

@@ -10,6 +10,7 @@ import Dashboard from './components/Dashboard/Dashboard.jsx';
 import Footer from './components/Footer/Footer.jsx';
 import Contacts from './components/Contacts/Contacts.jsx';
 import { getProfile } from './api';
+import { logout } from './api';
 import './shared/shared.css';
 
 function App() {
@@ -18,10 +19,12 @@ function App() {
 
   useEffect(() => {
     const initAuth = async () => {
-      if (localStorage.getItem('token')) {
+      const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+
+      if (token) {
         try {
           const data = await getProfile();
-          console.log('📥 Ответ сервера:', data); // Для отладки
+
           setUser({
             nickname: data.user?.nickname || data.nickname,
             email: data.user?.email || data.email,
@@ -31,7 +34,7 @@ function App() {
           setIsAuth(true);
         } catch (e) {
           console.log("❌ Сессия истекла:", e);
-          localStorage.removeItem('token');
+          clearAuth(); // Очищаем оба хранилища
           setUser(null);
           setIsAuth(false);
         }
@@ -50,8 +53,10 @@ function App() {
     setIsAuth(true);
   };
 
+
+
   const handleLogout = () => {
-    localStorage.removeItem('token');
+    logout(); // Используем функцию из api.js
     setUser(null);
     setIsAuth(false);
     window.location.href = '/login';
@@ -85,7 +90,7 @@ function App() {
           </Routes>
         </main>
       </div>
-      <Footer/>
+      <Footer />
     </Router>
   );
 }
