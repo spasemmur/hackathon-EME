@@ -1,38 +1,12 @@
 const express = require('express');
 const router = express.Router();
 const authController = require('../controllers/authController');
-const authMiddleware = require('../middlewares/authMiddleware');
-const User = require('../models/User'); // ✅ Добавь импорт модели
+const authMiddleware = require('../middleware/authMiddleware');
 
-// На самом деле путь будет /api/auth/register
 router.post('/register', authController.register);
-
 router.post('/login', authController.login);
-
-// ✅ ИСПРАВЛЕННЫЙ РОУТ /me
-router.get('/me', authMiddleware, async (req, res) => {
-    try {
-        const user = await User.findByPk(req.user.id, {
-            attributes: ['id', 'nickname', 'email', 'date_created']  // ✅ Добавляем date_created
-        });
-
-        if (!user) {
-            return res.status(404).json({ message: "Пользователь не найден" });
-        }
-
-        res.json({
-            message: "Доступ разрешен!",
-            user: {
-                id: user.id,
-                nickname: user.nickname,
-                email: user.email,
-                createdAt: user.date_created  // ✅ Возвращаем как createdAt для удобства
-            }
-        });
-    } catch (error) {
-        console.error('Ошибка в /me:', error);
-        res.status(500).json({ message: "Ошибка сервера" });
-    }
-});
+router.get('/me', authMiddleware, authController.getProfile);
+router.post('/upload-avatar', authMiddleware, authController.uploadAvatar);
+router.delete('/delete-avatar', authMiddleware, authController.deleteAvatar);
 
 module.exports = router;

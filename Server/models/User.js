@@ -1,49 +1,59 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../database-connection');
-const bcrypt = require('bcryptjs');
 
 const User = sequelize.define('User', {
     id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
-        autoIncrement: true,
+        autoIncrement: true
     },
     nickname: {
-        type: DataTypes.STRING(50),
-        unique: true,
+        type: DataTypes.STRING,
+        allowNull: false,
+        unique: true
     },
     email: {
-        type: DataTypes.STRING(100),
-        unique: true,
+        type: DataTypes.STRING,
         allowNull: false,
-        validate: { isEmail: true }
+        unique: true,
+        validate: {
+            isEmail: true
+        }
     },
     password: {
-        type: DataTypes.STRING(255),
-        allowNull: false,
+        type: DataTypes.STRING,
+        allowNull: false
     },
     sex: {
-        type: DataTypes.TINYINT(1),
-        defaultValue: 0,
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        validate: {
+            isIn: [[1, 2]] // 1 - male, 2 - female
+        }
     },
     birthdate: {
         type: DataTypes.DATEONLY,
+        allowNull: false
     },
-    // Добавляем поле date_created
-    date_created: {
+    avatar: {
+        type: DataTypes.STRING,
+        allowNull: true,
+        defaultValue: null
+    },
+    createdAt: {
         type: DataTypes.DATE,
-        field: 'date_created',
+        field: 'created_at',
+        defaultValue: DataTypes.NOW
+    },
+    updatedAt: {
+        type: DataTypes.DATE,
+        field: 'updated_at',
         defaultValue: DataTypes.NOW
     }
 }, {
     tableName: 'users',
-    timestamps: false,
-    hooks: {
-        beforeCreate: async (user) => {
-            const salt = await bcrypt.genSalt(10);
-            user.password = await bcrypt.hash(user.password, salt);
-        }
-    }
+    timestamps: true,
+    underscored: true
 });
 
 module.exports = User;

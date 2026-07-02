@@ -1,7 +1,65 @@
+import { useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
+import { uploadAvatar, deleteAvatar } from '../../api';
 import './Profile.css';
 
+const API_URL = import.meta.env.VITE_API_URL || '';
+
 function Profile({ user, isLoggedIn }) {
+  const [avatar, setAvatar] = useState(user?.avatar ? `${API_URL}${user.avatar}` : null);
+  const [isUploading, setIsUploading] = useState(false);
+  const fileInputRef = useRef(null);
+
+  // ✅ Обработка выбора файла
+  const handleAvatarChange = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    // Проверка типа файла
+    if (!file.type.startsWith('image/')) {
+      alert('Пожалуйста, выберите изображение');
+      return;
+    }
+
+    // Проверка размера (макс 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      alert('Размер файла не должен превышать 5MB');
+      return;
+    }
+
+    setIsUploading(true);
+
+    try {
+      // Загружаем на сервер
+      const avatarUrl = await uploadAvatar(file);
+      const fullUrl = `${API_URL}${avatarUrl}`;
+      setAvatar(fullUrl);
+    } catch (error) {
+      console.error('Ошибка загрузки:', error);
+      alert('Не удалось загрузить фото: ' + error.message);
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
+  // ✅ Клик по кнопке загрузки
+  const handleUploadClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  // ✅ Удаление аватара
+  const handleRemoveAvatar = async () => {
+    if (!confirm('Удалить фото профиля?')) return;
+
+    try {
+      await deleteAvatar();
+      setAvatar(null);
+    } catch (error) {
+      console.error('Ошибка удаления:', error);
+      alert('Не удалось удалить фото');
+    }
+  };
+
   if (!isLoggedIn || !user) {
     return (
       <div className="paper-page profile-page">
@@ -23,19 +81,6 @@ function Profile({ user, isLoggedIn }) {
     );
   }
 
-  // Форматируем дату создания аккаунта
-  const formatDate = (dateString) => {
-    if (!dateString) return 'Неизвестно';
-    const date = new Date(dateString);
-    return date.toLocaleDateString('ru-RU', {
-      day: 'numeric',
-      month: 'long',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    });
-  };
-
   return (
     <div className="paper-page profile-page">
       <div className="paper-card profile-card torn-edge">
@@ -45,6 +90,54 @@ function Profile({ user, isLoggedIn }) {
 
         <h2 className="paper-title">Мой профиль</h2>
 
+        {/* ✅ Секция аватара */}
+        <div className="avatar-section">
+          <div className="avatar-wrapper">
+            {avatar ? (
+              <img src={avatar} alt="Avatar" className="avatar-image" />
+            ) : (
+              <div className="avatar-placeholder">
+                <span className="avatar-icon">👤</span>
+              </div>
+            )}
+
+            {isUploading && (
+              <div className="avatar-loading">
+                <div className="spinner"></div>
+              </div>
+            )}
+          </div>
+
+          {/* Кнопки управления */}
+          <div className="avatar-controls">
+            <input
+              type="file"
+              ref={fileInputRef}
+              onChange={handleAvatarChange}
+              accept="image/*"
+              style={{ display: 'none' }}
+            />
+
+            <button
+              className="paper-btn primary-btn upload-btn"
+              onClick={handleUploadClick}
+              disabled={isUploading}
+            >
+              {isUploading ? '⏳ Загрузка...' : '📷 Загрузить фото'}
+            </button>
+
+            {avatar && (
+              <button
+                className="paper-btn secondary-btn remove-btn"
+                onClick={handleRemoveAvatar}
+              >
+                ✕ Удалить
+              </button>
+            )}
+          </div>
+        </div>
+
+        {/* Информация о пользователе */}
         <div className="profile-info">
           <h3 className="profile-name">{user.nickname}</h3>
           <p className="profile-email">📧 {user.email}</p>
@@ -58,8 +151,6 @@ function Profile({ user, isLoggedIn }) {
             </p>
           )}
         </div>
-
-        {/* Убрали статистику */}
       </div>
     </div>
   );
