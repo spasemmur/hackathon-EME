@@ -1,3 +1,4 @@
+/* ===== ОСНОВНОЙ LAYOUT ===== */
 .dashboard {
     display: grid;
     grid-template-columns: 220px 1fr 320px;
@@ -9,7 +10,7 @@
     color: #5a4632;
 }
 
-/* ===== Sidebar ===== */
+/* ===== SIDEBAR ===== */
 .dash-sidebar {
     display: flex;
     flex-direction: column;
@@ -30,21 +31,18 @@
     padding: 10px 12px;
     border-radius: 10px;
     cursor: pointer;
-    transition: background 0.2s;
+    transition: all 0.2s;
     font-size: 15px;
 }
 
 .sidebar-item:hover {
     background: #faf6e8;
+    transform: translateX(4px);
 }
 
 .sidebar-item.active {
     background: #b8c9a3;
     color: #fff;
-}
-
-.sidebar-icon {
-    font-size: 18px;
 }
 
 .sidebar-badge {
@@ -98,7 +96,7 @@
     margin-top: 8px;
 }
 
-/* ===== Main ===== */
+/* ===== MAIN CONTENT ===== */
 .dash-main {
     min-width: 0;
 }
@@ -125,6 +123,12 @@
     cursor: pointer;
     font-family: inherit;
     font-size: 15px;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.new-task-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(112, 85, 61, 0.25);
 }
 
 .dash-filters {
@@ -145,24 +149,17 @@
     transition: all 0.2s;
 }
 
+.filter-btn:hover {
+    background: #faf6e8;
+}
+
 .filter-btn.active {
     background: #b8c9a3;
     color: white;
     border-color: #b8c9a3;
 }
 
-.filter-select {
-    margin-left: auto;
-    background: #fffdf7;
-    border: 1px solid rgba(112, 85, 61, 0.2);
-    padding: 8px 14px;
-    border-radius: 8px;
-    font-family: inherit;
-    font-size: 14px;
-    cursor: pointer;
-}
-
-/* Tasks */
+/* ===== ЗАДАЧИ ===== */
 .tasks-list {
     display: flex;
     flex-direction: column;
@@ -185,8 +182,15 @@
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
 }
 
+/* Выполненная задача — приглушённый вид */
 .task-card.done {
     opacity: 0.7;
+    background: #f5f0e0;
+}
+
+.task-card.done .task-title {
+    text-decoration: line-through;
+    color: #999;
 }
 
 .task-checkbox {
@@ -204,11 +208,7 @@
 .task-title {
     font-size: 16px;
     margin-bottom: 6px;
-}
-
-.task-title.strikethrough {
-    text-decoration: line-through;
-    color: #999;
+    color: #5a4632;
 }
 
 .task-category {
@@ -217,71 +217,68 @@
     border-radius: 6px;
     font-size: 12px;
     background: #e8e0d0;
-}
-
-.cat-личное {
-    background: #d4e4c4;
-}
-
-.cat-здоровье {
-    background: #f4d4d4;
-}
-
-.cat-развитие {
-    background: #f4e4c4;
-}
-
-.cat-работа {
-    background: #d4d4f4;
-}
-
-.cat-привычка {
-    background: #e4d4f4;
-}
-
-.task-meta {
-    font-size: 13px;
     color: #756452;
 }
 
 .task-date {
+    font-size: 13px;
+    color: #756452;
     white-space: nowrap;
 }
 
-.progress-circle {
-    width: 50px;
-    height: 50px;
+/* ✅ Статус задачи: галочка или пустой круг */
+.task-completed-badge {
+    background: linear-gradient(135deg, #b8c9a3 0%, #7a8b5c 100%);
+    color: white;
+    width: 36px;
+    height: 36px;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    flex-shrink: 0;
-}
-
-.progress-inner {
-    width: 38px;
-    height: 38px;
-    background: #fffdf7;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 12px;
+    font-size: 20px;
     font-weight: bold;
+    flex-shrink: 0;
+    box-shadow: 0 2px 6px rgba(122, 139, 92, 0.3);
+    transition: transform 0.2s;
 }
 
-.show-completed-btn {
-    display: block;
-    margin: 20px auto 0;
-    background: transparent;
-    border: none;
+.task-completed-badge:hover {
+    transform: scale(1.1);
+}
+
+.task-pending-badge {
+    background: #e8e0d0;
     color: #756452;
-    font-family: inherit;
-    font-size: 14px;
-    cursor: pointer;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    flex-shrink: 0;
+    border: 2px dashed rgba(112, 85, 61, 0.3);
 }
 
-/* ===== Right panel ===== */
+.delete-task-btn {
+    background: #f4d4d4;
+    border: none;
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    color: #c97b7b;
+    transition: all 0.2s;
+}
+
+.delete-task-btn:hover {
+    background: #e97b7b;
+    color: white;
+}
+
+/* ===== ПРАВАЯ ПАНЕЛЬ ===== */
 .dash-right {
     display: flex;
     flex-direction: column;
@@ -324,8 +321,14 @@
     font-size: 22px;
     cursor: pointer;
     color: #70553d;
+    transition: transform 0.2s;
 }
 
+.panel-add:hover {
+    transform: scale(1.2);
+}
+
+/* ===== ЦЕЛИ (в правой панели) ===== */
 .goals-list {
     display: flex;
     flex-direction: column;
@@ -350,6 +353,7 @@
 .goal-title {
     font-size: 13px;
     margin-bottom: 6px;
+    color: #5a4632;
 }
 
 .goal-bar {
@@ -373,11 +377,19 @@
     text-align: right;
 }
 
+.empty-goals {
+    text-align: center;
+    padding: 20px;
+    color: #756452;
+    font-style: italic;
+    margin: 0;
+}
+
+/* ===== СТАТИСТИКА ===== */
 .stats-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 10px;
-    margin-bottom: 20px;
 }
 
 .stat-box {
@@ -395,84 +407,133 @@
     color: #756452;
 }
 
-.week-chart {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-end;
-    height: 100px;
-    margin-bottom: 16px;
-    padding: 0 4px;
-}
-
-.chart-bar-wrap {
+/* ===== ЦЕЛИ В ЦЕНТРЕ (при фильтре "Цели") ===== */
+.goals-center-view {
     display: flex;
     flex-direction: column;
+    gap: 16px;
+}
+
+.goal-card-center {
+    background: #fffdf7;
+    border-radius: 14px;
+    padding: 20px 24px;
+    display: flex;
     align-items: center;
-    gap: 4px;
+    gap: 16px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.goal-card-center:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+.goal-icon-large {
+    font-size: 40px;
+    flex-shrink: 0;
+}
+
+.goal-info {
     flex: 1;
+    min-width: 0;
 }
 
-.chart-bar {
-    width: 100%;
-    max-width: 24px;
-    background: linear-gradient(180deg, #b8c9a3, #7a8b5c);
-    border-radius: 4px 4px 0 0;
-    transition: height 0.4s;
-}
-
-.chart-label {
-    font-size: 11px;
-    color: #756452;
-}
-
-.to-progress-btn {
-    width: 100%;
-    background: #e8e0d0;
-    border: none;
-    padding: 10px;
-    border-radius: 8px;
-    cursor: pointer;
-    font-family: inherit;
-    font-size: 14px;
+.goal-info h3 {
+    margin: 0 0 8px;
+    font-size: 18px;
     color: #5a4632;
 }
 
-@media (max-width: 1100px) {
-    .dashboard {
-        grid-template-columns: 1fr;
-    }
-
-    .dash-sidebar,
-    .dash-right {
-        order: 2;
-    }
-
-    .dash-main {
-        order: 1;
-    }
+.goal-bar-large {
+    height: 10px;
+    background: #e8e0d0;
+    border-radius: 5px;
+    overflow: hidden;
 }
 
-/* Loading */
-.loading {
-    text-align: center;
-    padding: 50px;
-    font-size: 20px;
+.goal-bar-large .goal-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #b8c9a3, #7a8b5c);
+    border-radius: 5px;
+    transition: width 0.4s;
+}
+
+.goal-progress-text {
+    font-size: 12px;
     color: #756452;
+    margin-top: 4px;
+    font-style: italic;
 }
 
-/* Empty tasks */
-.empty-tasks {
+.goal-percent-large {
+    font-size: 22px;
+    font-weight: bold;
+    color: #70553d;
+    min-width: 60px;
+    text-align: right;
+    font-family: "Special Elite", cursive;
+}
+
+/* ✅ Кнопки +/- для изменения прогресса цели */
+.goal-progress-controls {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #faf6e8;
+    padding: 6px 10px;
+    border-radius: 20px;
+    border: 1px solid rgba(112, 85, 61, 0.15);
+}
+
+.progress-btn {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: none;
+    cursor: pointer;
+    font-size: 18px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    font-family: inherit;
+}
+
+.progress-btn.minus {
+    background: #f4d4d4;
+    color: #c97b7b;
+}
+
+.progress-btn.minus:hover {
+    background: #e97b7b;
+    color: white;
+    transform: scale(1.1);
+}
+
+.progress-btn.plus {
+    background: #d4e4c4;
+    color: #7a8b5c;
+}
+
+.progress-btn.plus:hover {
+    background: #7a8b5c;
+    color: white;
+    transform: scale(1.1);
+}
+
+.progress-value {
+    font-size: 16px;
+    font-weight: bold;
+    color: #5a4632;
+    min-width: 45px;
     text-align: center;
-    padding: 60px 20px;
-    color: #756452;
+    font-family: "Special Elite", cursive;
 }
 
-.empty-tasks p {
-    margin: 10px 0;
-}
-
-/* Delete button */
-.delete-task-btn {
+.delete-goal-btn {
     background: #f4d4d4;
     border: none;
     width: 28px;
@@ -484,12 +545,30 @@
     transition: all 0.2s;
 }
 
-.delete-task-btn:hover {
+.delete-goal-btn:hover {
     background: #e97b7b;
     color: white;
 }
 
-/* Modal */
+/* ===== ПУСТЫЕ СОСТОЯНИЯ ===== */
+.loading {
+    text-align: center;
+    padding: 50px;
+    font-size: 20px;
+    color: #756452;
+}
+
+.empty-tasks {
+    text-align: center;
+    padding: 60px 20px;
+    color: #756452;
+}
+
+.empty-tasks p {
+    margin: 10px 0;
+}
+
+/* ===== МОДАЛЬНЫЕ ОКНА ===== */
 .modal-overlay {
     position: fixed;
     top: 0;
@@ -501,6 +580,17 @@
     align-items: center;
     justify-content: center;
     z-index: 1000;
+    animation: fadeIn 0.2s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
 }
 
 .modal-content {
@@ -510,6 +600,19 @@
     width: 90%;
     max-width: 500px;
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    animation: slideUp 0.3s ease-out;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .modal-content h2 {
@@ -538,6 +641,15 @@
     font-family: inherit;
     font-size: 15px;
     background: white;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.modal-content input:focus,
+.modal-content textarea:focus,
+.modal-content select:focus {
+    outline: none;
+    border-color: #b8c9a3;
+    box-shadow: 0 0 0 3px rgba(184, 201, 163, 0.2);
 }
 
 .modal-content textarea {
@@ -552,64 +664,6 @@
     margin-top: 24px;
 }
 
-.task-progress-circle {
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-}
-
-.progress-inner {
-    width: 38px;
-    height: 38px;
-    background: #fffdf7;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 12px;
-    font-weight: bold;
-}
-
-.empty-goals {
-    text-align: center;
-    padding: 20px;
-    color: #756452;
-    font-style: italic;
-}
-
-.delete-goal-btn {
-    background: #f4d4d4;
-    border: none;
-    width: 24px;
-    height: 24px;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 12px;
-    color: #c97b7b;
-    margin-left: 8px;
-    transition: all 0.2s;
-}
-
-.delete-goal-btn:hover {
-    background: #e97b7b;
-    color: white;
-}
-
-.sidebar-item {
-    cursor: pointer;
-    transition: all 0.2s;
-}
-
-.sidebar-item:hover {
-    background: #faf6e8;
-    transform: translateX(4px);
-}
-
-/* Ошибка внутри модалки */
 .modal-error {
     background: #fde8e8;
     color: #c0392b;
@@ -623,7 +677,6 @@
     gap: 8px;
 }
 
-/* Подсказка "необязательно" */
 .optional-hint {
     font-size: 12px;
     color: #999;
@@ -631,78 +684,30 @@
     font-style: italic;
 }
 
-/* Центральное отображение целей */
-.goals-center-view {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
+/* ===== АДАПТИВНОСТЬ ===== */
+@media (max-width: 1100px) {
+    .dashboard {
+        grid-template-columns: 1fr;
+    }
+
+    .dash-sidebar,
+    .dash-right {
+        order: 2;
+    }
+
+    .dash-main {
+        order: 1;
+    }
 }
 
-.goal-card-center {
-    background: #fffdf7;
-    border-radius: 14px;
-    padding: 20px 24px;
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
-    transition: transform 0.2s, box-shadow 0.2s;
-}
+@media (max-width: 600px) {
+    .goal-card-center {
+        flex-wrap: wrap;
+    }
 
-.goal-card-center:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-}
-
-.goal-icon-large {
-    font-size: 36px;
-}
-
-.goal-info {
-    flex: 1;
-}
-
-.goal-info h3 {
-    margin: 0 0 8px;
-    font-size: 18px;
-    color: #5a4632;
-}
-
-.goal-bar-large {
-    height: 10px;
-    background: #e8e0d0;
-    border-radius: 5px;
-    overflow: hidden;
-}
-
-.goal-percent-large {
-    font-size: 20px;
-    font-weight: bold;
-    color: #70553d;
-    min-width: 60px;
-    text-align: right;
-}
-
-.delete-goal-btn {
-    background: #f4d4d4;
-    border: none;
-    width: 28px;
-    height: 28px;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 14px;
-    color: #c97b7b;
-    transition: all 0.2s;
-}
-
-.delete-goal-btn:hover {
-    background: #e97b7b;
-    color: white;
-}
-
-.empty-goals {
-    text-align: center;
-    padding: 20px;
-    color: #756452;
-    font-style: italic;
+    .goal-progress-controls {
+        width: 100%;
+        justify-content: center;
+        margin-top: 8px;
+    }
 }

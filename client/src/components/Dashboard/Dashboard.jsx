@@ -21,7 +21,6 @@ function Dashboard({ user }) {
     const [showNewTaskModal, setShowNewTaskModal] = useState(false);
     const [showNewGoalModal, setShowNewGoalModal] = useState(false);
 
-    // ✅ Добавили состояние для ошибок в модалках
     const [taskError, setTaskError] = useState('');
     const [goalError, setGoalError] = useState('');
 
@@ -39,7 +38,6 @@ function Dashboard({ user }) {
         target_value: ''
     });
 
-    // ✅ Загрузка данных при монтировании И при изменении filter
     useEffect(() => {
         loadData();
     }, [filter]);
@@ -52,19 +50,17 @@ function Dashboard({ user }) {
             if (filter === 'active') apiFilter = 'active';
             else if (filter === 'completed') apiFilter = 'completed';
 
-            // ✅ Загружаем задачи и цели, даже если статистика упала
             const [tasksData, goalsData] = await Promise.all([
                 getTasks({ filter: apiFilter }),
                 getGoals()
             ]);
 
-            // ✅ Статистику загружаем отдельно с обработкой ошибок
+            // Статистику загружаем отдельно
             let statsData = { total: 0, completed: 0, productivity: 0 };
             try {
                 statsData = await getTaskStats();
             } catch (statsError) {
-                console.warn('⚠️ Не удалось загрузить статистику, используем значения по умолчанию');
-                // Вычисляем статистику локально
+                console.warn('⚠️ Статистика недоступна, вычисляем локально');
                 const completed = tasksData.filter(t => t.is_completed).length;
                 statsData = {
                     total: tasksData.length,
@@ -77,7 +73,7 @@ function Dashboard({ user }) {
             setGoals(goalsData || []);
             setStats(statsData);
         } catch (error) {
-            console.error('❌ Ошибка загрузки данных:', error);
+            console.error('❌ Ошибка загрузки:', error);
             setTasks([]);
             setGoals([]);
             setStats({ total: 0, completed: 0, productivity: 0 });
@@ -90,6 +86,7 @@ function Dashboard({ user }) {
         setFilter(clickedFilter);
     };
 
+    // ✅ Переключение задачи — только статус (выполнено/не выполнено)
     const handleToggleTask = async (id) => {
         try {
             const updatedTask = await toggleTask(id);
@@ -100,7 +97,6 @@ function Dashboard({ user }) {
         }
     };
 
-    // ✅ Создание задачи с ошибкой в форме
     const handleCreateTask = async (e) => {
         e.preventDefault();
         setTaskError('');
@@ -110,11 +106,8 @@ function Dashboard({ user }) {
             return;
         }
 
-        console.log('📤 Отправляем задачу:', newTask);
-
         try {
             const createdTask = await createTask(newTask);
-            console.log('✅ Задача создана:', createdTask);
             setTasks([createdTask, ...tasks]);
             setShowNewTaskModal(false);
             setNewTask({
@@ -127,12 +120,10 @@ function Dashboard({ user }) {
             loadData();
         } catch (error) {
             console.error('❌ Ошибка создания задачи:', error);
-            console.error('❌ Текст ошибки:', error.message);
-            setTaskError(error.message || 'Не удалось создать задачу. Проверьте консоль сервера.');
+            setTaskError(error.message || 'Не удалось создать задачу');
         }
     };
 
-    // ✅ Создание цели с ошибкой в форме
     const handleCreateGoal = async (e) => {
         e.preventDefault();
         setGoalError('');
@@ -151,7 +142,7 @@ function Dashboard({ user }) {
             setShowNewGoalModal(false);
             setNewGoal({
                 title: '',
-                icon: '',
+                icon: '🎯',
                 target_value: ''
             });
         } catch (error) {
@@ -170,7 +161,23 @@ function Dashboard({ user }) {
         }
     };
 
-    // Фильтрация задач для sidebar
+    // ✅ Изменение прогресса цели
+    const handleChangeGoalProgress = async (goalId, delta) => {
+        const goal = goals.find(g => g.id === goalId);
+        if (!goal) return;
+
+        let newValue = goal.current_value + delta;
+        if (newValue < 0) newValue = 0;
+        if (goal.target_value && newValue > goal.target_value) newValue = goal.target_value;
+
+        try {
+            const updatedGoal = await updateGoalProgress(goalId, newValue);
+            setGoals(goals.map(g => g.id === goalId ? updatedGoal : g));
+        } catch (error) {
+            console.error('Ошибка обновления прогресса:', error);
+        }
+    };
+
     const getFilteredTasks = () => {
         if (filter === 'today') {
             const today = new Date().toISOString().split('T')[0];
@@ -186,7 +193,7 @@ function Dashboard({ user }) {
             });
         }
         if (filter === 'goals') {
-            return []; // Для целей показываем только правую панель
+            return [];
         }
         return tasks;
     };
@@ -201,6 +208,7 @@ function Dashboard({ user }) {
 
     return (
         <div className="dashboard">
+            {/* Sidebar */}
             <aside className="dash-sidebar">
                 <div className="sidebar-nav">
                     <div
@@ -253,6 +261,7 @@ function Dashboard({ user }) {
                 </div>
             </aside>
 
+            {/* Main content */}
             <main className="dash-main">
                 <div className="dash-header">
                     <h1 className="dash-title">
@@ -294,8 +303,32 @@ function Dashboard({ user }) {
                                         <div className="goal-bar-large">
                                             <div className="goal-fill" style={{ width: `${goal.progress}%` }}></div>
                                         </div>
+                                        {goal.target_value > 0 && (
+                                            <div className="goal-progress-text">
+                                                {goal.current_value} / {goal.target_value}
+                                            </div>
+                                        )}
                                     </div>
-                                    <span className="goal-percent-large">{goal.progress}%</span>
+
+                                    {/* ✅ Кнопки +/- для изменения прогресса */}
+                                    <div className="goal-progress-controls">
+                                        <button
+                                            className="progress-btn minus"
+                                            onClick={() => handleChangeGoalProgress(goal.id, -1)}
+                                            title="Уменьшить"
+                                        >
+                                            −
+                                        </button>
+                                        <span className="progress-value">{goal.progress}%</span>
+                                        <button
+                                            className="progress-btn plus"
+                                            onClick={() => handleChangeGoalProgress(goal.id, 1)}
+                                            title="Увеличить"
+                                        >
+                                            +
+                                        </button>
+                                    </div>
+
                                     <button className="delete-goal-btn" onClick={() => handleDeleteGoal(goal.id)}>✕</button>
                                 </div>
                             ))
@@ -324,11 +357,14 @@ function Dashboard({ user }) {
                                         <span className="task-category">{task.category}</span>
                                     </div>
                                     <span className="task-date">📅 {task.due_date || 'Без даты'}</span>
-                                    <div className="task-progress-circle" style={{
-                                        background: `conic-gradient(#7a8b5c ${task.progress}%, #e8e0d0 ${task.progress}%)`
-                                    }}>
-                                        <div className="progress-inner">{task.progress}%</div>
-                                    </div>
+
+                                    {/* ✅ Только галочка для выполненных задач */}
+                                    {task.is_completed ? (
+                                        <span className="task-completed-badge" title="Выполнено">✓</span>
+                                    ) : (
+                                        <span className="task-pending-badge" title="В процессе">○</span>
+                                    )}
+
                                     <button className="delete-task-btn" onClick={() => deleteTask(task.id).then(loadData)}>✕</button>
                                 </div>
                             ))
@@ -337,6 +373,7 @@ function Dashboard({ user }) {
                 )}
             </main>
 
+            {/* Right panel */}
             <aside className="dash-right">
                 <div className="panel">
                     <div className="panel-header">
@@ -382,15 +419,12 @@ function Dashboard({ user }) {
                 </div>
             </aside>
 
-            {/* Модалка задачи с ошибкой ВНУТРИ формы */}
+            {/* Модалка задачи */}
             {showNewTaskModal && (
                 <div className="modal-overlay" onClick={() => setShowNewTaskModal(false)}>
                     <div className="modal-content" onClick={e => e.stopPropagation()}>
                         <h2>Новая задача</h2>
-
-                        {/* ✅ Ошибка показывается здесь, а не в alert */}
                         {taskError && <div className="modal-error">⚠️ {taskError}</div>}
-
                         <form onSubmit={handleCreateTask}>
                             <div className="form-group">
                                 <label>Название *</label>
@@ -456,15 +490,12 @@ function Dashboard({ user }) {
                 </div>
             )}
 
-            {/* Модалка цели с ошибкой ВНУТРИ формы */}
+            {/* Модалка цели */}
             {showNewGoalModal && (
                 <div className="modal-overlay" onClick={() => setShowNewGoalModal(false)}>
                     <div className="modal-content" onClick={e => e.stopPropagation()}>
                         <h2>Новая цель</h2>
-
-                        {/* ✅ Ошибка показывается здесь */}
                         {goalError && <div className="modal-error">⚠️ {goalError}</div>}
-
                         <form onSubmit={handleCreateGoal}>
                             <div className="form-group">
                                 <label>Название *</label>
@@ -482,7 +513,7 @@ function Dashboard({ user }) {
                                     value={newGoal.icon}
                                     onChange={e => setNewGoal({ ...newGoal, icon: e.target.value })}
                                 >
-                                    <option value="🎯"> Цель</option>
+                                    <option value="🎯">🎯 Цель</option>
                                     <option value="📚">📚 Книги</option>
                                     <option value="💪">💪 Спорт</option>
                                     <option value="💧">💧 Вода</option>
