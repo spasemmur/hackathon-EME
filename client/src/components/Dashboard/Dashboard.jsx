@@ -337,37 +337,52 @@ function Dashboard({ user }) {
                 ) : (
                     <div className="tasks-list">
                         {displayTasks.length === 0 ? (
-                            <div className="empty-tasks">
-                                <p>📭 Нет задач</p>
-                                <p>Создайте первую задачу!</p>
-                            </div>
-                        ) : (
-                            displayTasks.map(task => (
-                                <div key={task.id} className={`task-card ${task.is_completed ? 'done' : ''}`}>
-                                    <input
-                                        type="checkbox"
-                                        checked={task.is_completed}
-                                        onChange={() => handleToggleTask(task.id)}
-                                        className="task-checkbox"
-                                    />
-                                    <div className="task-content">
-                                        <div className={`task-title ${task.is_completed ? 'strikethrough' : ''}`}>
-                                            {task.title}
-                                        </div>
-                                        <span className="task-category">{task.category}</span>
-                                    </div>
-                                    <span className="task-date">📅 {task.due_date || 'Без даты'}</span>
-
-                                    {/* ✅ Только галочка для выполненных задач */}
-                                    {task.is_completed ? (
-                                        <span className="task-completed-badge" title="Выполнено">✓</span>
-                                    ) : (
-                                        <span className="task-pending-badge" title="В процессе">○</span>
-                                    )}
-
-                                    <button className="delete-task-btn" onClick={() => deleteTask(task.id).then(loadData)}>✕</button>
+                            filter === 'completed' ? (
+                                <div className="empty-completed">
+                                    <p>🎉 Нет завершённых задач</p>
+                                    <p>Выполняйте задачи, чтобы видеть их здесь!</p>
                                 </div>
-                            ))
+                            ) : (
+                                <div className="empty-tasks">
+                                    <p>📭 Нет задач</p>
+                                    <p>Создайте первую задачу!</p>
+                                </div>
+                            )
+                        ) : (
+                            <>
+                                {/* Если есть завершённые задачи и мы не в фильтре "Завершённые" */}
+                                {filter !== 'completed' && displayTasks.some(t => t.is_completed) && (
+                                    <div className="completed-section-header">
+                                        Завершённые задачи ({displayTasks.filter(t => t.is_completed).length})
+                                    </div>
+                                )}
+
+                                {displayTasks.map(task => (
+                                    <div key={task.id} className={`task-card ${task.is_completed ? 'done' : ''}`}>
+                                        <input
+                                            type="checkbox"
+                                            checked={task.is_completed}
+                                            onChange={() => handleToggleTask(task.id)}
+                                            className="task-checkbox"
+                                        />
+                                        <div className="task-content">
+                                            <div className={`task-title ${task.is_completed ? 'strikethrough' : ''}`}>
+                                                {task.title}
+                                            </div>
+                                            <span className="task-category">{task.category}</span>
+                                        </div>
+                                        <span className="task-date">📅 {task.due_date || 'Без даты'}</span>
+
+                                        {task.is_completed ? (
+                                            <span className="task-completed-badge" title="Выполнено">✓</span>
+                                        ) : (
+                                            <span className="task-pending-badge" title="В процессе">○</span>
+                                        )}
+
+                                        <button className="delete-task-btn" onClick={() => deleteTask(task.id).then(loadData)}>✕</button>
+                                    </div>
+                                ))}
+                            </>
                         )}
                     </div>
                 )}

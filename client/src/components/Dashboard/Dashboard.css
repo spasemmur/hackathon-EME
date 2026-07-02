@@ -711,3 +711,116 @@
         margin-top: 8px;
     }
 }
+
+/* ===== ЗАВЕРШЁННЫЕ ЗАДАЧИ — УЛУЧШЕННЫЙ ВИД ===== */
+
+/* Улучшенный вид завершённой задачи */
+.task-card.done {
+    opacity: 0.85;
+    background: linear-gradient(135deg, #f5f0e0 0%, #faf6e8 100%);
+    border: 2px solid rgba(184, 201, 163, 0.3);
+    padding: 18px 20px;
+    margin-bottom: 8px;
+}
+
+.task-card.done:hover {
+    opacity: 1;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(122, 139, 92, 0.15);
+    border-color: rgba(184, 201, 163, 0.5);
+}
+
+/* Зачёркнутый текст с отступами */
+.task-card.done .task-title {
+    text-decoration: line-through;
+    color: #999;
+    margin-bottom: 8px;
+}
+
+/* Категория в завершённой задаче */
+.task-card.done .task-category {
+    background: rgba(184, 201, 163, 0.3);
+    color: #5a4632;
+    opacity: 0.8;
+}
+
+/* Дата в завершённой задаче */
+.task-card.done .task-date {
+    color: #8b7355;
+    font-style: italic;
+}
+
+/* Галочка в завершённой задаче */
+.task-card.done .task-completed-badge {
+    background: linear-gradient(135deg, #7a8b5c 0%, #5a6b4c 100%);
+    box-shadow: 0 2px 8px rgba(122, 139, 92, 0.4);
+}
+
+/* Разделитель между активными и завершёнными задачами */
+.tasks-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+/* Если показываем только завершённые — добавляем заголовок секции */
+.completed-section-header {
+    background: linear-gradient(135deg, #e8e0d0 0%, #d4d0c0 100%);
+    padding: 12px 20px;
+    border-radius: 10px;
+    margin: 20px 0 10px;
+    font-size: 14px;
+    color: #756452;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.completed-section-header::before {
+    content: '✓';
+    background: #7a8b5c;
+    color: white;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+}
+
+/* Пустое состояние для завершённых задач */
+.empty-completed {
+    text-align: center;
+    padding: 80px 20px;
+    color: #999;
+    background: #faf6e8;
+    border-radius: 14px;
+    border: 2px dashed rgba(112, 85, 61, 0.2);
+}
+
+.empty-completed p {
+    margin: 10px 0;
+    font-size: 16px;
+}
+
+/* Кнопка "Показать все завершённые" */
+.show-all-completed-btn {
+    background: transparent;
+    border: 2px dashed rgba(112, 85, 61, 0.3);
+    padding: 12px 24px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 14px;
+    color: #756452;
+    margin-top: 16px;
+    transition: all 0.2s;
+}
+
+.show-all-completed-btn:hover {
+    background: rgba(184, 201, 163, 0.2);
+    border-color: rgba(184, 201, 163, 0.5);
+    color: #5a4632;
+}
