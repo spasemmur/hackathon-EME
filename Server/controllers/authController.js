@@ -30,7 +30,7 @@ exports.register = async (req, res) => {
         );
 
         res.status(201).json({
-            success: true, // Добавь это поле для фронтенда
+            success: true,
             message: "Пользователь успешно создан",
             token, // Отдаем токен сразу!
             user: {
@@ -59,7 +59,6 @@ exports.register = async (req, res) => {
         res.status(500).json({
             success: false,
             message: "Внутренняя ошибка сервера",
-            // Для отладки в Postman выводим текст ошибки
             details: error.message
         });
     }

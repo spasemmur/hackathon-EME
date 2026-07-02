@@ -2,7 +2,6 @@ const jwt = require('jsonwebtoken');
 
 module.exports = (req, res, next) => {
     // 1. Пытаемся достать токен из заголовка Authorization
-    // Обычно он шлется в формате "Bearer ТВОЙ_ТОКЕН"
     const authHeader = req.headers.authorization;
     const token = authHeader && authHeader.split(' ')[1];
 

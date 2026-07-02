@@ -1,6 +1,6 @@
 const API_URL = import.meta.env.VITE_API_URL || '';
 
-// ✅ Универсальная функция для безопасного парсинга ответа
+// Универсальная функция для безопасного парсинга ответа
 const safeJson = async (response) => {
   const text = await response.text();
   try {
@@ -11,7 +11,7 @@ const safeJson = async (response) => {
   }
 };
 
-// ✅ Универсальная функция для проверки ответа
+// Универсальная функция для проверки ответа
 const checkResponse = async (response) => {
   if (response.status === 401) {
     localStorage.removeItem('token');

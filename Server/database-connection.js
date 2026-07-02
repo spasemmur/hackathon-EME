@@ -26,5 +26,4 @@ const testConnection = async () => {
 
 testConnection();
 
-// Экспортируем только одну переменную - sequelize
 module.exports = sequelize;

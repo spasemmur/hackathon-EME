@@ -23,7 +23,7 @@ function Profile({ user, isLoggedIn }) {
     );
   }
 
-  // ✅ Форматируем дату создания аккаунта
+  // Форматируем дату создания аккаунта
   const formatDate = (dateString) => {
     if (!dateString) return 'Неизвестно';
     const date = new Date(dateString);

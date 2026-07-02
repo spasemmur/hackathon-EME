@@ -196,7 +196,7 @@ exports.getStats = async (req, res) => {
             ? Math.round((completedTasks / totalTasks) * 100)
             : 0;
 
-        // ✅ Простая статистика без сложных запросов
+        // Простая статистика без сложных запросов
         res.json({
             success: true,
             stats: {
@@ -211,7 +211,7 @@ exports.getStats = async (req, res) => {
         console.error('❌ Ошибка в getStats:', error);
         console.error('❌ Stack trace:', error.stack);
 
-        // ✅ Возвращаем пустую статистику вместо 500
+        // Возвращаем пустую статистику вместо 500
         res.status(200).json({
             success: true,
             stats: {

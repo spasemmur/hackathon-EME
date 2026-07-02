@@ -11,7 +11,7 @@ const featureIcons = {
 };
 
 function Home({ isAuth, user }) {
-  // ✅ Если пользователь вошел — перенаправляем на задачи
+  // Если пользователь вошел — перенаправляем на задачи
   if (isAuth) {
     return <Navigate to="/tasks" replace />;
   }
@@ -33,7 +33,7 @@ function Home({ isAuth, user }) {
             фокусироваться на важном, отслеживать прогресс и достигать целей.
           </p>
 
-          {/* ✅ Кнопка "Начать" только для неавторизованных */}
+          {/* Кнопка "Начать" только для неавторизованных */}
           <Link to="/login" className="paper-btn primary-btn glued-btn hero-btn">
             Начать
           </Link>

@@ -20,7 +20,7 @@ function Register({ onLogin }) {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
-    // ✅ Функция для форматирования даты (ДД.ММ.ГГГГ)
+    // Функция для форматирования даты (ДД.ММ.ГГГГ)
     const handleDateChange = (e) => {
         let value = e.target.value.replace(/\D/g, ''); // Удаляем всё кроме цифр
 
@@ -62,7 +62,7 @@ function Register({ onLogin }) {
         setLoading(true);
 
         try {
-            // ✅ Преобразуем ДД.ММ.ГГГГ в ГГГГ-ММ-ДД для сервера
+            // Преобразуем ДД.ММ.ГГГГ в ГГГГ-ММ-ДД для сервера
             let formattedDate = formData.birthdate;
             if (formData.birthdate.includes('.')) {
                 const [day, month, year] = formData.birthdate.split('.');
@@ -74,7 +74,7 @@ function Register({ onLogin }) {
                 password: formData.password,
                 nickname: formData.nickname,
                 sex: formData.sex,
-                birthdate: formattedDate  // ✅ теперь в формате ГГГГ-ММ-ДД
+                birthdate: formattedDate  // теперь в формате ГГГГ-ММ-ДД
             });
 
             console.log('📥 Ответ сервера при регистрации:', result);

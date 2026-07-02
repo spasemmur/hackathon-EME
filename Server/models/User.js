@@ -29,10 +29,10 @@ const User = sequelize.define('User', {
     birthdate: {
         type: DataTypes.DATEONLY,
     },
-    // ✅ Добавляем поле date_created
+    // Добавляем поле date_created
     date_created: {
         type: DataTypes.DATE,
-        field: 'date_created', // Точное имя колонки в БД
+        field: 'date_created',
         defaultValue: DataTypes.NOW
     }
 }, {

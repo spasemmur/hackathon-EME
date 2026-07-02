@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom'; // ✅ Добавили useNavigate
+import { Link, useNavigate } from 'react-router-dom';
 import { loginUser } from '../../api.js';
 import './Login.css';
 
@@ -9,7 +9,7 @@ function Login({ onLogin }) {
   const [loginInput, setLoginInput] = useState('');
   const [passwordInput, setPasswordInput] = useState('');
   const [rememberMe, setRememberMe] = useState(false);
-  const navigate = useNavigate(); // ✅ Создаём navigate
+  const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -24,14 +24,14 @@ function Login({ onLogin }) {
         localStorage.setItem('rememberedLogin', loginInput);
       }
 
-      // ✅ Передаём данные в App.jsx
+      // Передаём данные в App.jsx
       onLogin({
         nickname: data.user?.nickname || loginInput,
         email: data.user?.email,
         id: data.user?.id
       });
 
-      // ✅ Перенаправляем на страницу задач
+      // Перенаправляем на страницу задач
       navigate('/tasks');
     } catch (err) {
       setError(err.message || 'Ошибка входа');
