@@ -82,14 +82,21 @@ exports.register = async (req, res) => {
 };
 
 // Вход
+// Вход
 exports.login = async (req, res) => {
     try {
         const validatedData = loginSchema.parse(req.body);
 
-        // Ищем пользователя по email или nickname
+        // ✅ ВАЖНО: импортируем Op в начале файла
+        const { Op } = require('sequelize');
+
+        // ✅ Ищем пользователя по email ИЛИ nickname
         const user = await User.findOne({
             where: {
-                email: validatedData.login
+                [Op.or]: [
+                    { email: validatedData.login },
+                    { nickname: validatedData.login }
+                ]
             }
         });
 
