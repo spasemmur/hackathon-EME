@@ -1,0 +1,398 @@
+/* ================= HOME PAGE ================= */
+
+.home-page {
+    padding-bottom: 80px;
+}
+
+/* ================= HERO ================= */
+
+.hero-section {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 60px;
+    align-items: center;
+    margin: 40px 0 70px;
+}
+
+.hero-paper {
+    background: #faf5ea;
+    padding: 50px 45px;
+    border-radius: 14px;
+    position: relative;
+    box-shadow:
+        0 18px 40px rgba(0, 0, 0, .15),
+        0 5px 12px rgba(0, 0, 0, .08);
+    transform: rotate(-1deg);
+}
+
+.hero-title {
+    font-family: "Special Elite", cursive;
+    font-size: 58px;
+    line-height: 1.1;
+    margin-bottom: 25px;
+    color: #3a2d21;
+}
+
+.hero-description {
+    font-size: 22px;
+    line-height: 1.6;
+    color: #4b3827;
+    margin-bottom: 35px;
+    max-width: 480px;
+}
+
+.hero-btn {
+    display: inline-block;
+}
+
+/* ================= СЦЕНА ================= */
+
+.hero-scene {
+    width: 100%;
+    height: 450px;
+    background: #f8f3e7;
+    border-radius: 26px;
+    position: relative;
+    overflow: hidden;
+    box-shadow:
+        0 25px 45px rgba(0, 0, 0, .15),
+        inset 0 2px 5px rgba(255, 255, 255, .5);
+    transform: rotate(2deg);
+}
+
+.scene-sky {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 55%;
+    background: linear-gradient(180deg, #b8d4e3 0%, #d4e6f1 100%);
+}
+
+.scene-sun {
+    position: absolute;
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    background: #ffd96c;
+    top: 30px;
+    right: 50px;
+    box-shadow: 0 0 40px rgba(255, 217, 108, .6);
+}
+
+.scene-cloud {
+    position: absolute;
+    width: 80px;
+    height: 28px;
+    background: white;
+    border-radius: 30px;
+}
+
+.scene-cloud::before {
+    content: "";
+    position: absolute;
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    background: white;
+    left: 10px;
+    top: -12px;
+}
+
+.scene-cloud::after {
+    content: "";
+    position: absolute;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: white;
+    right: 10px;
+    top: -15px;
+}
+
+.cloud-1 {
+    top: 50px;
+    left: 60px;
+}
+
+.cloud-2 {
+    top: 90px;
+    right: 100px;
+}
+
+.scene-mountains {
+    position: absolute;
+    bottom: 40%;
+    left: 0;
+    right: 0;
+    height: 40%;
+}
+
+.mountain {
+    position: absolute;
+    bottom: 0;
+    width: 0;
+    height: 0;
+    border-left: 100px solid transparent;
+    border-right: 100px solid transparent;
+    border-bottom: 180px solid #b7c8ad;
+}
+
+.mountain-1 {
+    left: 10%;
+}
+
+.mountain-2 {
+    left: 40%;
+    border-bottom-color: #9db48e;
+    border-left-width: 130px;
+    border-right-width: 130px;
+    border-bottom-width: 220px;
+}
+
+.mountain-3 {
+    right: 10%;
+}
+
+.scene-ground {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 40%;
+    background: #87b57d;
+}
+
+.tree {
+    position: absolute;
+    bottom: 30%;
+    width: 20px;
+    height: 70px;
+    background: #6b4f36;
+}
+
+.tree::before {
+    content: "";
+    position: absolute;
+    width: 60px;
+    height: 60px;
+    background: #4e8f53;
+    border-radius: 50%;
+    left: -20px;
+    top: -40px;
+}
+
+.tree-1 {
+    left: 15%;
+}
+
+.tree-2 {
+    left: 45%;
+}
+
+.tree-3 {
+    right: 20%;
+}
+
+.house {
+    position: absolute;
+    width: 80px;
+    height: 60px;
+    background: #f7efe4;
+    bottom: 25%;
+    right: 25%;
+}
+
+.house::before {
+    content: "";
+    position: absolute;
+    left: -10px;
+    top: -40px;
+    border-left: 50px solid transparent;
+    border-right: 50px solid transparent;
+    border-bottom: 40px solid #9a6042;
+}
+
+.house::after {
+    content: "";
+    position: absolute;
+    width: 18px;
+    height: 30px;
+    background: #8b5b3d;
+    bottom: 0;
+    left: 30px;
+}
+
+/* ================= БУМАЖКА С ФИЧАМИ ================= */
+
+.features-paper {
+    background: #faf5ea;
+    padding: 35px 40px;
+    border-radius: 14px;
+    position: relative;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, .1);
+    transform: rotate(-0.5deg);
+    margin: 60px auto;
+    max-width: 1100px;
+}
+
+.features-intro {
+    font-size: 22px;
+    color: #4b3827;
+    margin-bottom: 25px;
+    text-align: center;
+    font-family: "Patrick Hand", cursive;
+}
+
+.features-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+}
+
+.feature-bubble {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 15px;
+    background: #fffdf7;
+    border-radius: 12px;
+    transition: .25s;
+}
+
+.feature-bubble:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 18px rgba(0, 0, 0, .1);
+}
+
+.feature-bubble-icon {
+    font-size: 36px;
+    flex-shrink: 0;
+}
+
+.feature-bubble-text {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.feature-bubble-text strong {
+    font-family: "Special Elite", cursive;
+    font-size: 18px;
+    color: #3a2d21;
+}
+
+.feature-bubble-text span {
+    font-size: 14px;
+    color: #7b644d;
+    font-family: "Patrick Hand", cursive;
+}
+
+/* ================= ПОЧЕМУ ПОТОК ================= */
+
+.why-title {
+    text-align: center;
+    margin: 60px 0 40px;
+    font-size: 42px;
+    position: relative;
+}
+
+.why-title::after {
+    content: "";
+    display: block;
+    width: 80px;
+    height: 3px;
+    background: #70553d;
+    margin: 10px auto 0;
+    border-radius: 2px;
+}
+
+.why-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 25px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.why-card {
+    background: #fffdf7;
+    padding: 30px 25px;
+    border-radius: 14px;
+    text-align: center;
+    position: relative;
+    transition: .3s;
+}
+
+.why-card:nth-child(1) {
+    transform: rotate(-1.5deg);
+}
+
+.why-card:nth-child(2) {
+    transform: rotate(1deg);
+}
+
+.why-card:nth-child(3) {
+    transform: rotate(-1deg);
+}
+
+.why-card:nth-child(4) {
+    transform: rotate(1.5deg);
+}
+
+.why-card:hover {
+    transform: translateY(-8px) rotate(0deg) !important;
+}
+
+.why-icon {
+    font-size: 50px;
+    margin-bottom: 15px;
+}
+
+.why-card-title {
+    font-family: "Special Elite", cursive;
+    font-size: 22px;
+    color: #3a2d21;
+    margin-bottom: 10px;
+}
+
+.why-card-text {
+    font-size: 16px;
+    line-height: 1.5;
+    color: #6b5a48;
+    font-family: "Patrick Hand", cursive;
+}
+
+/* ================= АДАПТИВ ================= */
+
+@media (max-width: 1000px) {
+    .features-row {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .why-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .hero-section {
+        grid-template-columns: 1fr;
+    }
+
+    .hero-title {
+        font-size: 42px;
+    }
+
+    .hero-scene {
+        height: 350px;
+    }
+
+    .features-row {
+        grid-template-columns: 1fr;
+    }
+
+    .why-grid {
+        grid-template-columns: 1fr;
+    }
+}

@@ -1,0 +1,12 @@
+const express = require('express');
+const router = express.Router();
+const authController = require('../controllers/authController');
+const authMiddleware = require('../middlewares/authMiddleware');
+
+router.post('/register', authController.register);
+router.post('/login', authController.login);
+router.get('/me', authMiddleware, authController.getProfile);
+router.post('/upload-avatar', authMiddleware, authController.uploadAvatar);
+router.delete('/delete-avatar', authMiddleware, authController.deleteAvatar);
+
+module.exports = router;

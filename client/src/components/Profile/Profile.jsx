@@ -1,0 +1,167 @@
+import { useState, useRef, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import { uploadAvatar, deleteAvatar } from '../../api';
+import './Profile.css';
+
+const API_URL = import.meta.env.VITE_API_URL || '';
+
+function Profile({ user, isLoggedIn, onLogout, onUserUpdate }) {
+  const [avatar, setAvatar] = useState(user?.avatar || null);
+  const [isUploading, setIsUploading] = useState(false);
+  const fileInputRef = useRef(null);
+
+  // Синхронизируем с user
+  useEffect(() => {
+    if (user?.avatar !== undefined) {
+      setAvatar(user.avatar);
+    }
+  }, [user?.avatar]);
+
+  const avatarUrl = avatar ? `${API_URL}${avatar}` : null;
+
+  const handleAvatarChange = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    if (!file.type.startsWith('image/')) {
+      alert('Пожалуйста, выберите изображение');
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      alert('Размер файла не должен превышать 5MB');
+      return;
+    }
+
+    setIsUploading(true);
+
+    try {
+      const avatarUrl = await uploadAvatar(file);
+      setAvatar(avatarUrl);
+
+      if (onUserUpdate) {
+        onUserUpdate({ ...user, avatar: avatarUrl });
+      }
+    } catch (error) {
+      console.error('Ошибка загрузки:', error);
+      alert('Не удалось загрузить фото: ' + error.message);
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
+  const handleUploadClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleRemoveAvatar = async () => {
+    if (!confirm('Удалить фото профиля?')) return;
+
+    try {
+      await deleteAvatar();
+      setAvatar(null);
+      if (onUserUpdate) {
+        onUserUpdate({ ...user, avatar: null });
+      }
+    } catch (error) {
+      console.error('Ошибка удаления:', error);
+      alert('Не удалось удалить фото');
+    }
+  };
+
+  if (!isLoggedIn || !user) {
+    return (
+      <div className="paper-page profile-page">
+        <div className="paper-card torn-edge">
+          <div className="tape tape-top-center"></div>
+          <div className="paper-crease"></div>
+          <div className="empty-state">
+            <div className="empty-icon">👤</div>
+            <h2 className="paper-title">Профиль</h2>
+            <p className="paper-text">
+              Пожалуйста, войдите в свой аккаунт
+            </p>
+            <Link to="/login" className="paper-btn primary-btn glued-btn">
+              Перейти ко входу
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="paper-page profile-page">
+      <div className="paper-card profile-card torn-edge">
+        <div className="tape tape-top-left"></div>
+        <div className="tape tape-top-right"></div>
+        <div className="paper-crease"></div>
+
+        <h2 className="paper-title">Мой профиль</h2>
+
+        {/* СЕКЦИЯ АВАТАРА */}
+        <div className="avatar-section">
+          <div className="avatar-wrapper">
+            {avatarUrl ? (
+              <img src={avatarUrl} alt="Avatar" className="avatar-image" />
+            ) : (
+              <div className="avatar-placeholder">
+                <span className="avatar-icon">👤</span>
+              </div>
+            )}
+
+            {isUploading && (
+              <div className="avatar-loading">
+                <div className="spinner"></div>
+              </div>
+            )}
+          </div>
+
+          <div className="avatar-controls">
+            <input
+              type="file"
+              ref={fileInputRef}
+              onChange={handleAvatarChange}
+              accept="image/*"
+              style={{ display: 'none' }}
+            />
+
+            <button
+              className="paper-btn primary-btn upload-btn"
+              onClick={handleUploadClick}
+              disabled={isUploading}
+            >
+              {isUploading ? '⏳ Загрузка...' : '📷 Загрузить фото'}
+            </button>
+
+            {avatar && (
+              <button
+                className="paper-btn secondary-btn remove-btn"
+                onClick={handleRemoveAvatar}
+              >
+                ✕ Удалить
+              </button>
+            )}
+          </div>
+        </div>
+
+        {/* ИНФОРМАЦИЯ */}
+        <div className="profile-info">
+          <h3 className="profile-name">{user.nickname}</h3>
+          <p className="profile-email"> {user.email}</p>
+          {user.createdAt && (
+            <p className="profile-created">
+              📅 Участник с {new Date(user.createdAt).toLocaleDateString('ru-RU', {
+                day: 'numeric',
+                month: 'long',
+                year: 'numeric'
+              })}
+            </p>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default Profile;

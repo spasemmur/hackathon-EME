@@ -1,40 +1,27 @@
-const express = require("express");
-const cors = require("cors");
-
+const express = require('express');
+const cors = require('cors');
+const path = require('path');
 const app = express();
-const PORT = 3001;
 
-app.use(cors());
+// CORS
+app.use(cors({
+    origin: ['http://localhost:5173', 'https://spasemmur.ru'],
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization']
+}));
+
 app.use(express.json());
 
-app.get("/", (req, res) => {
-    res.json({ message: "Сервер работает" });
-});
+// Разрешаем доступ к загруженным файлам
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-app.post("/registration", (req, res) => {
-    const { login, password } = req.body;
+// Роуты
+app.use('/api/auth', require('./routes/auth'));
+app.use('/api/tasks', require('./routes/tasks'));
+app.use('/api/goals', require('./routes/goals'));
 
-    if (!login || !password) {
-        return res.status(400).json({
-            success: false,
-            message: "Заполните логин и пароль"
-        });
-    }
-
-    if (login === "student" && password === "summer2026") {
-        return res.json({
-            success: true,
-            message: "Проверка пройдена, всё супер!",
-            user: login
-        });
-    }
-
-    return res.status(401).json({
-        success: false,
-        message: "Логин или пароль введены неверно"
-    });
-});
-
+const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
-    console.log(`Сервер запущен: http://localhost:${PORT}`);
+    console.log(`✅ Server started on port ${PORT}`);
 });
