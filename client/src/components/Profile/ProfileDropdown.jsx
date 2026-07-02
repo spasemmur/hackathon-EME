@@ -1,117 +1,104 @@
-import { useState, useEffect, useRef } from 'react';
-import { Link } from 'react-router-dom';
+import { useState, useRef, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import './ProfileDropdown.css';
+
+const API_URL = import.meta.env.VITE_API_URL || '';
 
 function ProfileDropdown({ user, isLoggedIn, onLogout }) {
     const [isOpen, setIsOpen] = useState(false);
-    const ref = useRef(null);
+    const dropdownRef = useRef(null);
+    const navigate = useNavigate();
 
+    // Аватар из user.avatar
+    const avatarUrl = user?.avatar ? `${API_URL}${user.avatar}` : null;
+
+    // Закрытие при клике вне
     useEffect(() => {
-        const onClick = (e) => {
-            if (ref.current && !ref.current.contains(e.target)) setIsOpen(false);
+        const handleClickOutside = (event) => {
+            if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+                setIsOpen(false);
+            }
         };
-        const onEsc = (e) => e.key === 'Escape' && setIsOpen(false);
-        document.addEventListener('mousedown', onClick);
-        window.addEventListener('keydown', onEsc);
-        return () => {
-            document.removeEventListener('mousedown', onClick);
-            window.removeEventListener('keydown', onEsc);
-        };
+
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
     }, []);
 
-    // Не авторизован — кнопка входа
+    const handleLogout = () => {
+        onLogout();
+        setIsOpen(false);
+        navigate('/login');
+    };
+
     if (!isLoggedIn || !user) {
         return (
-            <Link to="/login" className="pd-login-btn paper-btn primary-btn glued-btn">
-                Войти
-            </Link>
+            <div className="auth-buttons">
+                <Link to="/login" className="nav-link">Войти</Link>
+                <Link to="/register" className="nav-btn primary">Регистрация</Link>
+            </div>
         );
     }
 
     return (
-        <div className="profile-dropdown" ref={ref}>
+        <div className="profile-dropdown" ref={dropdownRef}>
+            {/* ✅ Кнопка-триггер с аватаркой */}
             <button
-                type="button"
-                className={`pd-trigger ${isOpen ? 'is-open' : ''}`}
-                onClick={() => setIsOpen((v) => !v)}
-                aria-expanded={isOpen}
+                className="profile-trigger"
+                onClick={() => setIsOpen(!isOpen)}
             >
-                <span className="pd-trigger-avatar">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="22" height="22" fill="#555">
-                        <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
-                    </svg>
-                </span>
-                <span className="pd-trigger-name">{user.nickname}</span>
-                <svg
-                    className={`pd-arrow ${isOpen ? 'is-rotated' : ''}`}
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 24 24"
-                    width="16"
-                    height="16"
-                    fill="#555"
-                >
-                    <path d="M7 10l5 5 5-5z" />
-                </svg>
+                <div className="trigger-avatar">
+                    {avatarUrl ? (
+                        <img src={avatarUrl} alt="Avatar" className="trigger-avatar-img" />
+                    ) : (
+                        <div className="trigger-avatar-placeholder">
+                            <span>👤</span>
+                        </div>
+                    )}
+                </div>
+                <span className="trigger-name">{user.nickname}</span>
+                <span className={`trigger-arrow ${isOpen ? 'open' : ''}`}>▼</span>
             </button>
 
-            <div className={`pd-panel ${isOpen ? 'is-visible' : ''}`}>
-                <div className="paper-card torn-edge pd-card">
-                    <div className="tape tape-top-left"></div>
-                    <div className="tape tape-top-right"></div>
-                    <div className="paper-crease"></div>
-
-                    <h2 className="paper-title pd-title">Мой профиль</h2>
-
-                    <div className="pd-header soft-shadow">
-                        <div className="pd-avatar">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="48" height="48" fill="#555">
-                                <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
-                            </svg>
+            {/* ✅ Выпадающее меню */}
+            {isOpen && (
+                <div className="dropdown-menu">
+                    {/* Мини-профиль с аватаркой */}
+                    <div className="mini-profile">
+                        <div className="mini-avatar">
+                            {avatarUrl ? (
+                                <img src={avatarUrl} alt="Avatar" className="mini-avatar-img" />
+                            ) : (
+                                <div className="mini-avatar-placeholder">
+                                    <span>👤</span>
+                                </div>
+                            )}
                         </div>
-                        <div className="pd-info">
-                            <h3 className="pd-name">{user.nickname}</h3>
-                            <p className="pd-email">{user.email}</p>
-                        </div>
-                    </div>
-
-                    <div className="pd-stats">
-                        <div className="pd-stat soft-shadow">
-                            <div className="pd-stat-num">0</div>
-                            <div className="pd-stat-lbl">Привычек</div>
-                        </div>
-                        <div className="pd-stat soft-shadow">
-                            <div className="pd-stat-num">0</div>
-                            <div className="pd-stat-lbl">Дней подряд</div>
-                        </div>
-                        <div className="pd-stat soft-shadow">
-                            <div className="pd-stat-num">0%</div>
-                            <div className="pd-stat-lbl">Успешность</div>
+                        <div className="mini-info">
+                            <div className="mini-name">{user.nickname}</div>
+                            <div className="mini-email">{user.email}</div>
                         </div>
                     </div>
 
-                    <div className="pd-actions">
-                        <Link
-                            to="/profile"
-                            className="paper-btn primary-btn glued-btn pd-full-btn"
-                            onClick={() => setIsOpen(false)}
-                        >
-                            Открыть полный профиль →
-                        </Link>
-                        {onLogout && (
-                            <button
-                                type="button"
-                                className="paper-btn glued-btn pd-logout-btn"
-                                onClick={() => {
-                                    setIsOpen(false);
-                                    onLogout();
-                                }}
-                            >
-                                Выйти
-                            </button>
-                        )}
-                    </div>
+                    <div className="dropdown-divider"></div>
+
+                    {/* Ссылки */}
+                    <Link to="/profile" className="dropdown-item" onClick={() => setIsOpen(false)}>
+                        <span className="item-icon"></span>
+                        Мой профиль
+                    </Link>
+                    <Link to="/tasks" className="dropdown-item" onClick={() => setIsOpen(false)}>
+                        <span className="item-icon">📋</span>
+                        Мои задачи
+                    </Link>
+
+                    <div className="dropdown-divider"></div>
+
+                    <button className="dropdown-item logout-btn" onClick={handleLogout}>
+                        <span className="item-icon"></span>
+                        Выйти
+                    </button>
                 </div>
-            </div>
+            )}
         </div>
     );
 }

@@ -16,7 +16,7 @@ import './shared/shared.css';
 function App() {
   const [user, setUser] = useState(null);
   const [isAuth, setIsAuth] = useState(false);
-  
+
   useEffect(() => {
     const initAuth = async () => {
       const token = localStorage.getItem('token') || sessionStorage.getItem('token');
@@ -62,6 +62,10 @@ function App() {
     window.location.href = '/login';
   };
 
+  const handleUserUpdate = (updatedData) => {
+    setUser(updatedData);
+  };
+
   return (
     <Router>
       <div><title>Поток</title></div>
@@ -86,7 +90,7 @@ function App() {
               isAuth ? <Dashboard user={user} /> : <Navigate to="/login" replace />
             } />
             <Route path="/profile" element={
-              isAuth ? <Profile user={user} isLoggedIn={isAuth} onLogout={handleLogout} /> : <Navigate to="/login" replace />
+              isAuth ? <Profile user={user} isLoggedIn={isAuth} onLogout={handleLogout} onUserUpdate={handleUserUpdate} /> : <Navigate to="/login" replace />
             } />
           </Routes>
         </main>

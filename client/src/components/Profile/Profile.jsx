@@ -1,27 +1,33 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { uploadAvatar, deleteAvatar } from '../../api';
 import './Profile.css';
 
 const API_URL = import.meta.env.VITE_API_URL || '';
 
-function Profile({ user, isLoggedIn }) {
-  const [avatar, setAvatar] = useState(user?.avatar ? `${API_URL}${user.avatar}` : null);
+function Profile({ user, isLoggedIn, onLogout, onUserUpdate }) {
+  const [avatar, setAvatar] = useState(user?.avatar || null);
   const [isUploading, setIsUploading] = useState(false);
   const fileInputRef = useRef(null);
 
-  // ✅ Обработка выбора файла
+  // Синхронизируем с user
+  useEffect(() => {
+    if (user?.avatar !== undefined) {
+      setAvatar(user.avatar);
+    }
+  }, [user?.avatar]);
+
+  const avatarUrl = avatar ? `${API_URL}${avatar}` : null;
+
   const handleAvatarChange = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
 
-    // Проверка типа файла
     if (!file.type.startsWith('image/')) {
       alert('Пожалуйста, выберите изображение');
       return;
     }
 
-    // Проверка размера (макс 5MB)
     if (file.size > 5 * 1024 * 1024) {
       alert('Размер файла не должен превышать 5MB');
       return;
@@ -30,10 +36,12 @@ function Profile({ user, isLoggedIn }) {
     setIsUploading(true);
 
     try {
-      // Загружаем на сервер
       const avatarUrl = await uploadAvatar(file);
-      const fullUrl = `${API_URL}${avatarUrl}`;
-      setAvatar(fullUrl);
+      setAvatar(avatarUrl);
+
+      if (onUserUpdate) {
+        onUserUpdate({ ...user, avatar: avatarUrl });
+      }
     } catch (error) {
       console.error('Ошибка загрузки:', error);
       alert('Не удалось загрузить фото: ' + error.message);
@@ -42,18 +50,19 @@ function Profile({ user, isLoggedIn }) {
     }
   };
 
-  // ✅ Клик по кнопке загрузки
   const handleUploadClick = () => {
     fileInputRef.current?.click();
   };
 
-  // ✅ Удаление аватара
   const handleRemoveAvatar = async () => {
     if (!confirm('Удалить фото профиля?')) return;
 
     try {
       await deleteAvatar();
       setAvatar(null);
+      if (onUserUpdate) {
+        onUserUpdate({ ...user, avatar: null });
+      }
     } catch (error) {
       console.error('Ошибка удаления:', error);
       alert('Не удалось удалить фото');
@@ -70,7 +79,7 @@ function Profile({ user, isLoggedIn }) {
             <div className="empty-icon">👤</div>
             <h2 className="paper-title">Профиль</h2>
             <p className="paper-text">
-              Пожалуйста, войдите в свой аккаунт, чтобы просматривать профиль
+              Пожалуйста, войдите в свой аккаунт
             </p>
             <Link to="/login" className="paper-btn primary-btn glued-btn">
               Перейти ко входу
@@ -83,7 +92,6 @@ function Profile({ user, isLoggedIn }) {
 
   return (
     <div className="paper-page profile-page">
-      <title>Профиль</title>
       <div className="paper-card profile-card torn-edge">
         <div className="tape tape-top-left"></div>
         <div className="tape tape-top-right"></div>
@@ -91,11 +99,11 @@ function Profile({ user, isLoggedIn }) {
 
         <h2 className="paper-title">Мой профиль</h2>
 
-        {/* ✅ Секция аватара */}
+        {/* СЕКЦИЯ АВАТАРА */}
         <div className="avatar-section">
           <div className="avatar-wrapper">
-            {avatar ? (
-              <img src={avatar} alt="Avatar" className="avatar-image" />
+            {avatarUrl ? (
+              <img src={avatarUrl} alt="Avatar" className="avatar-image" />
             ) : (
               <div className="avatar-placeholder">
                 <span className="avatar-icon">👤</span>
@@ -109,7 +117,6 @@ function Profile({ user, isLoggedIn }) {
             )}
           </div>
 
-          {/* Кнопки управления */}
           <div className="avatar-controls">
             <input
               type="file"
@@ -138,10 +145,10 @@ function Profile({ user, isLoggedIn }) {
           </div>
         </div>
 
-        {/* Информация о пользователе */}
+        {/* ИНФОРМАЦИЯ */}
         <div className="profile-info">
           <h3 className="profile-name">{user.nickname}</h3>
-          <p className="profile-email">📧 {user.email}</p>
+          <p className="profile-email"> {user.email}</p>
           {user.createdAt && (
             <p className="profile-created">
               📅 Участник с {new Date(user.createdAt).toLocaleDateString('ru-RU', {
